@@ -113,3 +113,18 @@ func (s Service) AddListMemberToProject(userId, projectId int, listUserId []int)
 
 	return nil
 }
+
+func (s Service) GetProjectDetail(projectId int) (*entity.UserProjectRole, error) {
+	//Get role owner
+	roleOwnerProject, err := s.roleRepo.FindByCode(string(define.OWNER), string(define.PROJECT))
+	if err != nil {
+		return nil, err
+	}
+
+	projectDetail, err := s.userProjectRoleRepo.GetProjectDetailWithOwner(projectId, roleOwnerProject.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	return projectDetail, nil
+}

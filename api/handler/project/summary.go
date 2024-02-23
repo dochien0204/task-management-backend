@@ -9,6 +9,7 @@ import (
 	"source-base-go/entity"
 	"source-base-go/infrastructure/repository/util"
 	"source-base-go/usecase/project"
+	"strconv"
 
 	ginI18n "github.com/gin-contrib/i18n"
 	"github.com/gin-gonic/gin"
@@ -120,6 +121,28 @@ func addListMemberToProject(ctx *gin.Context, projectService project.UseCase) {
 	response := presenter.BasicResponse{
 		Status:  fmt.Sprint(http.StatusOK),
 		Message: ginI18n.MustGetMessage(config.SUCCESS),
+	}
+	ctx.JSON(http.StatusOK, response)
+}
+
+func getProjectDetail(ctx *gin.Context, projectService project.UseCase) {
+	projectId := ctx.Query("projectId")
+	projectIdConv, err := strconv.Atoi(projectId)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	projectDetail, err := projectService.GetProjectDetail(projectIdConv)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	response := presenter.BasicResponse{
+		Status:  fmt.Sprint(http.StatusOK),
+		Message: ginI18n.MustGetMessage(config.SUCCESS),
+		Results: convertProjectDetailToPresenter(projectDetail),
 	}
 	ctx.JSON(http.StatusOK, response)
 }

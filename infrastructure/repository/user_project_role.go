@@ -57,3 +57,18 @@ func (r UserProjectRoleRepository) GetProjectOwner(projectId, roleId int) (*enti
 
 	return userProjectRole, nil
 }
+
+func (r UserProjectRoleRepository) GetProjectDetailWithOwner(projectId, roleId int) (*entity.UserProjectRole, error) {
+	userProjectRole := &entity.UserProjectRole{}
+	err := r.db.Model(&entity.UserProjectRole{}).
+		Where("project_id = ?", projectId).
+		Where("role_id = ?", roleId).
+		Preload("Project").
+		Preload("User").
+		First(&userProjectRole).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return userProjectRole, nil
+}
