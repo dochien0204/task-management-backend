@@ -66,3 +66,7 @@ func (s Service) CreateProject(userId int, project *entity.Project) error {
 
 	return nil
 }
+
+func (s Service) GetListProjectOfUser(userId, page, size int, sortType, sortBy string) ([]*entity.Project, error) {
+	return s.projectRepo.GetListProjectOfUser(userId, page, size, sortType, sortBy)
+}
