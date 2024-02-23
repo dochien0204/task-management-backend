@@ -12,6 +12,7 @@ type ProjectRepository interface {
 
 	FindProjectByName(name string) (*entity.Project, error)
 	CreateProject(data *entity.Project) error
+	GetListProjectOfUser(userId, page, size int, sortType, sortBy string) ([]*entity.Project, error)
 }
 
 type UserProjectRoleRepository interface {
@@ -28,4 +29,5 @@ type UseCase interface {
 	WithTrx(trxHandle *gorm.DB) Service
 
 	CreateProject(userId int, project *entity.Project) error
+	GetListProjectOfUser(userId, page, size int, sortType, sortBy string) ([]*entity.Project, error)
 }

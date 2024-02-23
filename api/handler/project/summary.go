@@ -49,3 +49,36 @@ func createProject(ctx *gin.Context, projectService project.UseCase) {
 	}
 	ctx.JSON(http.StatusOK, response)
 }
+
+func getListProjectOfUser(ctx *gin.Context, projectService project.UseCase) {
+	page := util.GetPage(ctx, "page")
+	pageSize := util.GetPageSize(ctx, "size")
+	sortBy := ctx.Query("sortBy")
+	sortType := ctx.Query("sortType")
+
+	//Get URL param
+	token, err := util.GetToken(ctx)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	claims, err := util.ParseAccessToken(token)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	listProject, err := projectService.GetListProjectOfUser(claims.UserId, page, pageSize, sortType, sortBy)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, err)
+		return
+	}
+
+	response := presenter.BasicResponse{
+		Status:  fmt.Sprint(http.StatusOK),
+		Message: ginI18n.MustGetMessage(config.SUCCESS),
+		Results: convertListProjectEntityToPresenter(listProject),
+	}
+	ctx.JSON(http.StatusOK, response)
+}
