@@ -1,0 +1,42 @@
+{
+    "error": {
+        "one": "Error",
+        "other": "Error"
+    },
+    "success": {
+        "one": "Success",
+        "other": "Success"
+    },
+    "lock": {
+        "one": "User is locked",
+        "other": "User is locked"
+    },
+    "internalServerError": {
+        "one": "Internal Server Error",
+        "other": "Internal Server Error"
+    },
+    "badRequest": {
+        "one": "Bad Request",
+        "other": "Bad Request"
+    },
+    "unauthorized": {
+        "one": "Unauthorized",
+        "other": "Unauthorized"
+    },
+    "forbidden": {
+        "one": "Forbidden",
+        "other": "Forbidden"
+    },
+    "usernameNotExists": {
+        "one": "Username not exists",
+        "other": "Username not exists"
+    },
+    "invalidPassword": {
+        "one": "Invalid Password",
+        "other": "Invalid Password"
+    },
+    "accountAlreadyExists": {
+        "one": "Account already exists",
+        "other": "Account already exists"
+    }
+}

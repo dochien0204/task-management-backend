@@ -1,0 +1,42 @@
+{
+    "error": {
+        "one": "Có lỗi xảy ra",
+        "other": "Có lỗi xảy ra"
+    },
+    "success": {
+        "one": "Thành công",
+        "other": "Thành công"
+    },
+    "lock": {
+        "one": "Bị khóa",
+        "other": "Bị khóa"
+    },
+    "internalServerError": {
+        "one": "Lỗi hệ thống",
+        "other": "Lỗi hệ thống"
+    },
+    "badRequest": {
+        "one": "Truy cập không hơp lệ",
+        "other": "Truy cập không hơp lệ"
+    },
+    "unauthorized": {
+        "one": "Phiên truy cập bị hết hạn",
+        "other": "Phiên truy cập bị hết hạn"
+    },
+    "forbidden": {
+        "one": "Không có quyền truy cập tài nguyên này",
+        "other": "Không có quyền truy cập tài nguyên này"
+    },
+    "usernameNotExists": {
+        "one": "Username không tồn tại",
+        "other": "Username không tồn tại"
+    },
+    "invalidPassword": {
+        "one": "Mật khẩu không chính xác",
+        "other": "Mât khẩu không chính xác"
+    },
+    "accountAlreadyExists": {
+        "one": "Tài khoản đã tồn tại",
+        "other": "Tài khoản đã tồn tại"
+    }
+}

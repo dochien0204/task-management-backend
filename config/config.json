@@ -1,0 +1,30 @@
+{
+    "name": "source-base-go",
+    "env": "local",
+    "host": {
+        "address": "localhost",
+        "port": 8080
+    },
+    "jwt": {
+        "secretKey": "secretKey",
+        "header": "Authorization",
+        "schema": "Bearer",
+        "accessMaxAge": 604800000000000,
+        "refeshMaxAge" : 691200000000000
+    },
+    "service": {},
+    "database": {
+        "postgres": {
+            "timeout": 5000,
+            "host": "source-base-database",
+            "port": "5432",
+            "dbname": "base-go",
+            "user": "postgres",
+            "password": "postgres"
+        }
+    },
+    "redis": {
+        "host": "source-base-redis",
+        "port": "6379"
+    }
+}
