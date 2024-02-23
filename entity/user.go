@@ -9,6 +9,7 @@ import (
 type User struct {
 	Id       int `gorm:"primaryKey"`
 	Username string
+	Name     string
 	Password string
 	StatusId int
 	Status   *Status

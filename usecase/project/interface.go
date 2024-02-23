@@ -19,6 +19,9 @@ type UserProjectRoleRepository interface {
 	WithTrx(trxHandle *gorm.DB) repository.UserProjectRoleRepository
 
 	CreateUserProjectRole(data *entity.UserProjectRole) error
+	CreateListUserProjectRole(listUserProjectRole []*entity.UserProjectRole) error
+	GetProjectOwner(projectId, roleId int) (*entity.UserProjectRole, error)
+	GetProjectDetailWithOwner(projectId, roleId int) (*entity.UserProjectRole, error)
 }
 
 type RoleRepository interface {
@@ -30,4 +33,5 @@ type UseCase interface {
 
 	CreateProject(userId int, project *entity.Project) error
 	GetListProjectOfUser(userId, page, size int, sortType, sortBy string) ([]*entity.Project, error)
+	GetProjectDetail(projectId int) (*entity.UserProjectRole, error)
 }

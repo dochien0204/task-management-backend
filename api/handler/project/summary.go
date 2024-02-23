@@ -9,6 +9,7 @@ import (
 	"source-base-go/entity"
 	"source-base-go/infrastructure/repository/util"
 	"source-base-go/usecase/project"
+	"strconv"
 
 	ginI18n "github.com/gin-contrib/i18n"
 	"github.com/gin-gonic/gin"
@@ -79,6 +80,69 @@ func getListProjectOfUser(ctx *gin.Context, projectService project.UseCase) {
 		Status:  fmt.Sprint(http.StatusOK),
 		Message: ginI18n.MustGetMessage(config.SUCCESS),
 		Results: convertListProjectEntityToPresenter(listProject),
+	}
+	ctx.JSON(http.StatusOK, response)
+}
+
+func addListMemberToProject(ctx *gin.Context, projectService project.UseCase) {
+	//Get URL param
+	var payload projectPayload.ListUserIdProjectPayload
+	err := ctx.ShouldBindJSON(&payload)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	token, err := util.GetToken(ctx)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	claims, err := util.ParseAccessToken(token)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	trxHandle := ctx.MustGet("db_trx").(*gorm.DB)
+	err = projectService.WithTrx(trxHandle).AddListMemberToProject(claims.UserId, payload.ProjectId, payload.ListUserId)
+	if err != nil {
+		switch err {
+		case entity.ErrForbidden:
+			util.HandleException(ctx, http.StatusForbidden, err)
+			return
+		default:
+			util.HandleException(ctx, http.StatusBadRequest, err)
+			return
+		}
+	}
+
+	response := presenter.BasicResponse{
+		Status:  fmt.Sprint(http.StatusOK),
+		Message: ginI18n.MustGetMessage(config.SUCCESS),
+	}
+	ctx.JSON(http.StatusOK, response)
+}
+
+func getProjectDetail(ctx *gin.Context, projectService project.UseCase) {
+	projectId := ctx.Query("projectId")
+	projectIdConv, err := strconv.Atoi(projectId)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	projectDetail, err := projectService.GetProjectDetail(projectIdConv)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	response := presenter.BasicResponse{
+		Status:  fmt.Sprint(http.StatusOK),
+		Message: ginI18n.MustGetMessage(config.SUCCESS),
+		Results: convertProjectDetailToPresenter(projectDetail),
 	}
 	ctx.JSON(http.StatusOK, response)
 }

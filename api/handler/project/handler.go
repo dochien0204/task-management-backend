@@ -10,14 +10,22 @@ import (
 )
 
 func MakeHandlers(app *gin.Engine, projectService project.UseCase, verifier util.Verifier, tx middleware.TxMiddleware) {
-	userGroup := app.Group("api/project")
+	projectGroup := app.Group("api/project")
 	{
-		userGroup.POST("/create", middleware.JWTVerifyMiddleware(verifier), middleware.PermissionMiddleware(define.ADMIN), tx.DBTransactionMiddleware(), func(ctx *gin.Context) {
+		projectGroup.POST("/create", middleware.JWTVerifyMiddleware(verifier), middleware.PermissionMiddleware(define.ADMIN), tx.DBTransactionMiddleware(), func(ctx *gin.Context) {
 			createProject(ctx, projectService)
 		})
 
-		userGroup.GET("/list-project", func(ctx *gin.Context) {
+		projectGroup.GET("/list-project", middleware.JWTVerifyMiddleware(verifier), func(ctx *gin.Context) {
 			getListProjectOfUser(ctx, projectService)
+		})
+
+		projectGroup.POST("/add-member-to-project", middleware.JWTVerifyMiddleware(verifier), tx.DBTransactionMiddleware(), func(ctx *gin.Context) {
+			addListMemberToProject(ctx, projectService)
+		})
+
+		projectGroup.GET("/detail", middleware.JWTVerifyMiddleware(verifier), func(ctx *gin.Context) {
+			getProjectDetail(ctx, projectService)
 		})
 	}
 }

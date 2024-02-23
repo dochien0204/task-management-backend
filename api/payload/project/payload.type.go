@@ -5,3 +5,8 @@ type ProjectPayload struct {
 	Description string `json:"description"`
 	Image       string `json:"image"`
 }
+
+type ListUserIdProjectPayload struct {
+	ProjectId  int   `json:"projectId"`
+	ListUserId []int `json:"listUserId"`
+}

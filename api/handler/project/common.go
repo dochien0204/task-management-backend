@@ -32,3 +32,19 @@ func convertListProjectEntityToPresenter(listData []*entity.Project) []*projectP
 
 	return listProjectPresenter
 }
+
+func convertProjectDetailToPresenter(userProject *entity.UserProjectRole) projectPresenter.ProjectDetailPresenter {
+	return projectPresenter.ProjectDetailPresenter{
+		Id:          userProject.Project.Id,
+		Name:        userProject.Project.Name,
+		Image:       userProject.Project.Image,
+		Description: userProject.Project.Description,
+		CreatedAt:   userProject.Project.CreatedAt.Format(config.LAYOUT),
+		UpdatedAt:   userProject.Project.UpdatedAt.Format(config.LAYOUT),
+		Owner: &projectPresenter.User{
+			Id:       userProject.User.Id,
+			Username: userProject.User.Username,
+			Name:     userProject.User.Name,
+		},
+	}
+}
