@@ -37,10 +37,11 @@ func (r RoleRepository) GetAllRole() ([]*entity.Role, error) {
 	return listRole, nil
 }
 
-func (r RoleRepository) FindByCode(code string) (*entity.Role, error) {
+func (r RoleRepository) FindByCode(code string, typeRole string) (*entity.Role, error) {
 	var role *entity.Role
 	err := r.db.
 		Where("code = ?", code).
+		Where("type = ?", typeRole).
 		Find(&role).Error
 	if err != nil {
 		return nil, err

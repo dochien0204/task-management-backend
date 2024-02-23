@@ -5,6 +5,7 @@ import "time"
 type Role struct {
 	Id          int `gorm:"primaryKey"`
 	Name        string
+	Type        string
 	Code        string
 	Description string
 

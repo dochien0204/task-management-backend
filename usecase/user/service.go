@@ -101,7 +101,7 @@ func (s Service) Register(user *entity.User) error {
 	}
 
 	//Find default role user
-	roleDefault, err := s.roleRepo.FindByCode(string(define.USER))
+	roleDefault, err := s.roleRepo.FindByCode(string(define.USER), string(define.SYSTEM))
 	if err != nil {
 		return entity.ErrInternalServerError
 	}

@@ -16,6 +16,6 @@ func (s Service) GetAllRole() ([]*entity.Role, error) {
 	return s.roleRepo.GetAllRole()
 }
 
-func (s Service) FindByCode(code string) (*entity.Role, error) {
-	return s.roleRepo.FindByCode(code)
+func (s Service) FindByCode(code string, typeRole string) (*entity.Role, error) {
+	return s.roleRepo.FindByCode(code, typeRole)
 }

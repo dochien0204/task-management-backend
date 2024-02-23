@@ -24,7 +24,7 @@ type RoleRepository interface {
 	WithTrx(trxHandle *gorm.DB) repository.RoleRepository
 
 	FindAllRolesOfUser(userId int) ([]*entity.Role, error)
-	FindByCode(code string) (*entity.Role, error)
+	FindByCode(code string, typeRole string) (*entity.Role, error)
 }
 
 type UserRoleRepository interface {

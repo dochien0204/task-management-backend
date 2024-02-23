@@ -15,7 +15,6 @@ type User struct {
 
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	DeletedAt time.Time
 }
 
 func (u *User) HashPassword() error {

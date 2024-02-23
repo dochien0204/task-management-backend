@@ -34,9 +34,9 @@ func findAllRole(ctx *gin.Context, roleService role.UseCase) {
 func findByCode(ctx *gin.Context, roleService role.UseCase) {
 	//Get URL param
 	code := ctx.Query("code")
-
+	typeRole := ctx.Query("type")
 	//Get data
-	role, err := roleService.FindByCode(code)
+	role, err := roleService.FindByCode(code, typeRole)
 	if err != nil {
 		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
 		return
