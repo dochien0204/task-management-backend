@@ -12,4 +12,5 @@ const (
 	USERNAME_NOT_EXISTS    = "usernameNotExists"
 	INVALID_PASSWORD       = "invalidPassword"
 	ACCOUNT_ALREADY_EXISTS = "accountAlreadyExists"
+	PROJECT_ALREADY_EXISTS = "projectAlreadyExists"
 )

@@ -6,12 +6,14 @@ import (
 	"log"
 	"os"
 	authHandler "source-base-go/api/handler/auth"
+	projectHandler "source-base-go/api/handler/project"
 	roleHandler "source-base-go/api/handler/role"
 	userHandler "source-base-go/api/handler/user"
 	"source-base-go/api/middleware"
 	"source-base-go/config"
 	"source-base-go/infrastructure/repository"
 	jwtUtil "source-base-go/infrastructure/repository/util"
+	"source-base-go/usecase/project"
 	"source-base-go/usecase/role"
 	"source-base-go/usecase/user"
 
@@ -66,10 +68,13 @@ func main() {
 	userRepo := repository.NewUserRepostory(db)
 	roleRepo := repository.NewRoleRepository(db)
 	userRoleRepo := repository.NewUserRoleRepository(db)
+	userProjectRoleRepo := repository.NewUserProjectRole(db)
+	projectRepo := repository.NewProjectRepository(db)
 
 	//Define service
 	userService := user.NewService(userRepo, roleRepo, userRoleRepo, verifier)
 	roleServce := role.NewService(roleRepo)
+	projectService := project.NewService(projectRepo, userProjectRoleRepo, roleRepo)
 
 	//gin I18n
 	app.Use(ginI18n.Localize(
@@ -97,6 +102,7 @@ func main() {
 	userHandler.MakeHandlers(app, userService, verifier, tx)
 	roleHandler.MakeHandlers(app, roleServce, verifier, tx)
 	authHandler.MakeHandlers(app, userService, tx)
+	projectHandler.MakeHandlers(app, projectService, verifier, tx)
 
 	//Swagger
 	docs.SwaggerInfo.BasePath = ""

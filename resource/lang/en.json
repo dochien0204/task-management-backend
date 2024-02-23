@@ -38,5 +38,9 @@
     "accountAlreadyExists": {
         "one": "Account already exists",
         "other": "Account already exists"
+    },
+    "projectAlreadyExists": {
+        "one": "Project already exists",
+        "other": "Project already exists"
     }
 }
