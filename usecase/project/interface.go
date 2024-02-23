@@ -19,6 +19,8 @@ type UserProjectRoleRepository interface {
 	WithTrx(trxHandle *gorm.DB) repository.UserProjectRoleRepository
 
 	CreateUserProjectRole(data *entity.UserProjectRole) error
+	CreateListUserProjectRole(listUserProjectRole []*entity.UserProjectRole) error
+	GetProjectOwner(projectId, roleId int) (*entity.UserProjectRole, error)
 }
 
 type RoleRepository interface {

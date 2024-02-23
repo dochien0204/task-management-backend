@@ -70,3 +70,46 @@ func (s Service) CreateProject(userId int, project *entity.Project) error {
 func (s Service) GetListProjectOfUser(userId, page, size int, sortType, sortBy string) ([]*entity.Project, error) {
 	return s.projectRepo.GetListProjectOfUser(userId, page, size, sortType, sortBy)
 }
+
+func (s Service) AddListMemberToProject(userId, projectId int, listUserId []int) error {
+	listUserProjectRole := []*entity.UserProjectRole{}
+
+	//Check user is owner of project
+	roleOwner, err := s.roleRepo.FindByCode(string(define.OWNER), string(define.PROJECT))
+	if err != nil {
+		return err
+	}
+
+	userProjectOwner, err := s.userProjectRoleRepo.GetProjectOwner(projectId, roleOwner.Id)
+	if err != nil {
+		return err
+	}
+
+	if userProjectOwner.UserId != userId {
+		return entity.ErrForbidden
+	}
+
+	//Get role member project
+	roleMemberProject, err := s.roleRepo.FindByCode(string(define.MEMBER), string(define.PROJECT))
+	if err != nil {
+		return err
+	}
+
+	for _, userId := range listUserId {
+		userProjectRole := &entity.UserProjectRole{
+			ProjectId: projectId,
+			UserId:    userId,
+			RoleId:    roleMemberProject.Id,
+		}
+
+		listUserProjectRole = append(listUserProjectRole, userProjectRole)
+	}
+
+	//Create list user projectt role
+	err = s.userProjectRoleRepo.CreateListUserProjectRole(listUserProjectRole)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
