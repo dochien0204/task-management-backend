@@ -28,3 +28,16 @@ func (r StatusRepository) FindByType(typeStatus string) ([]*entity.Status, error
 
 	return listStatus, nil
 }
+
+func (r StatusRepository) GetStatusByCodeAndType(typeStatus string, code string) (*entity.Status, error) {
+	status := &entity.Status{}
+	err := r.db.Model(&entity.Status{}).
+		Where("type = ? AND code = ?", typeStatus, code).
+		First(&status).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return status, nil
+}

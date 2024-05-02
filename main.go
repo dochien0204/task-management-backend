@@ -9,6 +9,7 @@ import (
 	masterDataHandler "source-base-go/api/handler/master_data"
 	projectHandler "source-base-go/api/handler/project"
 	roleHandler "source-base-go/api/handler/role"
+	taskHandler "source-base-go/api/handler/task"
 	userHandler "source-base-go/api/handler/user"
 	"source-base-go/api/middleware"
 	"source-base-go/config"
@@ -17,6 +18,7 @@ import (
 	masterdata "source-base-go/usecase/master_data"
 	"source-base-go/usecase/project"
 	"source-base-go/usecase/role"
+	"source-base-go/usecase/task"
 	"source-base-go/usecase/user"
 
 	"github.com/gin-contrib/cors"
@@ -73,12 +75,14 @@ func main() {
 	userProjectRoleRepo := repository.NewUserProjectRole(db)
 	projectRepo := repository.NewProjectRepository(db)
 	statusRepo := repository.NewStatusRepository(db)
+	taskRepo := repository.NewTaskRepository(db)
 
 	//Define service
 	userService := user.NewService(userRepo, roleRepo, userRoleRepo, verifier)
 	roleServce := role.NewService(roleRepo)
 	projectService := project.NewService(projectRepo, userProjectRoleRepo, roleRepo)
 	masterDataService := masterdata.NewService(statusRepo)
+	taskService := task.NewService(taskRepo, statusRepo)
 
 	//gin I18n
 	app.Use(ginI18n.Localize(
@@ -108,6 +112,7 @@ func main() {
 	authHandler.MakeHandlers(app, userService, tx)
 	projectHandler.MakeHandlers(app, projectService, verifier, tx)
 	masterDataHandler.MakeHandlers(app, masterDataService, verifier)
+	taskHandler.MakeHandlers(app, taskService, verifier, tx)
 
 	//Swagger
 	docs.SwaggerInfo.BasePath = ""
