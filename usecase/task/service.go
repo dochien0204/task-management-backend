@@ -28,9 +28,12 @@ func (s Service) WithTrx(trxHandle *gorm.DB) Service {
 	return s
 }
 
-func (s Service) CreateTask(userId int, payload *taskPayload.TaskPayload) error {
-	startDate, _ := time.Parse(config.LAYOUT, payload.StartDate)
-	dueDate, _ := time.Parse(config.LAYOUT, payload.DueDate)
+func (s Service) CreateTask(userId int, payload taskPayload.TaskPayload) error {
+	startDate, err := time.Parse(config.LAYOUT, payload.StartDate)
+	dueDate, err := time.Parse(config.LAYOUT, payload.DueDate)
+	if err != nil {
+		return err
+	}
 	//Status doing
 	status, err := s.statusRepo.GetStatusByCodeAndType(define.TASK_CODE, define.TASK_BACKLOG_STATUS)
 	if err != nil {

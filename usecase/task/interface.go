@@ -21,5 +21,5 @@ type StatusRepository interface {
 type UseCase interface {
 	WithTrx(trxHandle *gorm.DB) Service
 
-	CreateTask(userId int, payload *payload.TaskPayload) error
+	CreateTask(userId int, payload payload.TaskPayload) error
 }

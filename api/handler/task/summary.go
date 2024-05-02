@@ -36,7 +36,7 @@ func createTask(ctx *gin.Context, taskService task.UseCase) {
 	}
 
 	trxHandle := ctx.MustGet("db_trx").(*gorm.DB)
-	err = taskService.WithTrx(trxHandle).CreateTask(claims.UserId, &taskPayload)
+	err = taskService.WithTrx(trxHandle).CreateTask(claims.UserId, taskPayload)
 	if err != nil {
 		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
 		return
