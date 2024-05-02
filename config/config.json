@@ -1,30 +1,30 @@
 {
-    "name": "source-base-go",
-    "env": "local",
-    "host": {
-        "address": "localhost",
-        "port": 8080
-    },
-    "jwt": {
-        "secretKey": "secretKey",
-        "header": "Authorization",
-        "schema": "Bearer",
-        "accessMaxAge": 604800000000000,
-        "refeshMaxAge" : 691200000000000
-    },
-    "service": {},
-    "database": {
-        "postgres": {
-            "timeout": 5000,
-            "host": "localhost",
-            "port": "5432",
-            "dbname": "task_management",
-            "user": "postgres",
-            "password": "root"
-        }
-    },
-    "redis": {
-        "host": "localhost",
-        "port": "6379"
+  "name": "source-base-go",
+  "env": "local",
+  "host": {
+    "address": "localhost",
+    "port": 8000
+  },
+  "jwt": {
+    "secretKey": "secretKey",
+    "header": "Authorization",
+    "schema": "Bearer",
+    "accessMaxAge": 604800000000000,
+    "refeshMaxAge": 691200000000000
+  },
+  "service": {},
+  "database": {
+    "postgres": {
+      "timeout": 5000,
+      "host": "localhost",
+      "port": "5432",
+      "dbname": "task_management",
+      "user": "postgres",
+      "password": "root"
     }
+  },
+  "redis": {
+    "host": "localhost",
+    "port": "6379"
+  }
 }

@@ -32,10 +32,10 @@ func (r UserRepository) WithTrx(trxHanlde *gorm.DB) UserRepository {
 func (r UserRepository) GetUserProfile(userId int) (*entity.User, error) {
 	user := entity.User{}
 
-	result := r.db.
+	result := r.db.Model(&entity.User{}).
 		Where("id = ?", userId).
 		Preload("Status").
-		Find(&user)
+		First(&user)
 	if result.Error != nil {
 		return nil, result.Error
 	}
