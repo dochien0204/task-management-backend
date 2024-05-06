@@ -86,3 +86,33 @@ func getListTaskOfProject(ctx *gin.Context, taskService task.UseCase) {
 	}
 	ctx.JSON(http.StatusOK, response)
 }
+
+func getTaskDetail(ctx *gin.Context, taskService task.UseCase) {
+	taskId := ctx.Query("taskId")
+	taskIdInt, _ := strconv.Atoi(taskId)
+
+	task, err := taskService.GetTaskDetail(taskIdInt)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	response := presenter.BasicResponse {
+		Status: fmt.Sprint(http.StatusOK),
+		Message: i18n.MustGetMessage(config.SUCCESS),
+		Results: convertTaskDetailEntityToPresenter(task),
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
+
+func updateTask(ctx *gin.Context, taskService task.UseCase) {
+	var payload payload.TaskUpdatePayload
+	err := ctx.ShouldBindJSON(&payload)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	
+}

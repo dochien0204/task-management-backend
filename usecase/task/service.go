@@ -1,6 +1,7 @@
 package task
 
 import (
+	payload "source-base-go/api/payload/task"
 	taskPayload "source-base-go/api/payload/task"
 	"source-base-go/config"
 	"source-base-go/entity"
@@ -72,4 +73,24 @@ func (s Service) GetListTaskOfProject(projectId int, page, size int, sortType, s
 	}
 
 	return listTask, listStatusTask, nil 
+}
+
+func (s Service) GetTaskDetail(taskId int) (*entity.Task, error) {
+	return s.taskRepo.GetTaskDetail(taskId)
+}
+
+func (s Service) UpdateTask(data payload.TaskUpdatePayload) error {
+	mapTask := map[string]interface{}{}
+	mapTask["name"] = data.Name
+	mapTask["description"] = data.Description
+	mapTask["assignee_id"] = data.AssigneeId
+	mapTask["reviewer_id"] = data.ReviewerId
+	mapTask["category_id"] = data.CategoryId
+	mapTask["status_id"] = data.StatusId
+	startDate, _ := time.Parse(config.LAYOUT, data.StartDate)
+	dueDate, _ := time.Parse(config.LAYOUT, data.DueDate)
+	mapTask["start_date"]= startDate
+	mapTask["due_date"] = dueDate
+
+	return s.taskRepo.UpdateTask(data.Id, mapTask)
 }

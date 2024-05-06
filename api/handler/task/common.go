@@ -2,6 +2,7 @@ package handler
 
 import (
 	presenter "source-base-go/api/presenter/task"
+	"source-base-go/config"
 	"source-base-go/entity"
 )
 
@@ -37,4 +38,37 @@ func convertListTaskToPresenter(listTask []*entity.Task, listStatus []*entity.St
 	}
 
 	return listPresenter
+}
+
+func convertTaskDetailEntityToPresenter(task *entity.Task) presenter.TaskDetail {
+	return presenter.TaskDetail{
+		Id: task.Id,
+		Name: task.Name,
+		Description: task.Description,
+		Category: &presenter.Category{
+			Id: task.Category.Id,
+			Name: task.Category.Name,
+			Code: task.Category.Code,
+			Type: task.Category.Type,
+		},
+		User: &presenter.User{
+			Id: task.User.Id,
+			Username: task.User.Username,
+			Name: task.User.Name,
+		},
+		Assignee: &presenter.User{
+			Id: task.User.Id,
+			Username: task.User.Username,
+			Name: task.User.Name,
+		},
+		Reviewer: &presenter.User{
+			Id: task.User.Id,
+			Username: task.User.Username,
+			Name: task.User.Name,
+		},
+		StartDate: task.StartDate.Format(config.LAYOUT),
+		DueDate: task.DueDate.Format(config.LAYOUT),
+		CreatedAt: task.CreatedAt.Format(config.LAYOUT),
+		UpdatedAt: task.UpdatedAt.Format(config.LAYOUT),
+	}
 }

@@ -13,6 +13,8 @@ type TaskRepository interface {
 
 	Create(data *entity.Task) error
 	GetListTaskOfProject(projectId int, page, size int, sortType, sortBy string) ([]*entity.Task, error)
+	GetTaskDetail(taskId int) (*entity.Task, error)
+	UpdateTask(taskId int, mapData map[string]interface{}) error
 }
 
 type StatusRepository interface {
@@ -25,4 +27,6 @@ type UseCase interface {
 
 	CreateTask(userId int, payload payload.TaskPayload) error
 	GetListTaskOfProject(projectId int, page, size int, sortType, sortBy string) ([]*entity.Task, []*entity.Status, error)
+	GetTaskDetail(taskId int) (*entity.Task, error)
+	UpdateTask(payload payload.TaskUpdatePayload) error
 }

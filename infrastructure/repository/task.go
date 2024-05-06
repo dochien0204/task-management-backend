@@ -78,3 +78,29 @@ func (r TaskRepository) GetListTaskOfProject(projectId int, page, size int, sort
 
 	return listTask, nil
 }
+
+func (r TaskRepository) GetTaskDetail(taskId int) (*entity.Task, error) {
+	task := &entity.Task{}
+	err := r.db.Model(&entity.Task{}).
+		Preload("User").
+		Preload("Assignee").
+		Preload("Category").
+		Where("id = ?", taskId).
+		First(&task).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return task, nil
+}
+
+func (r TaskRepository) UpdateTask(taskId int, mapData map[string]interface{}) error {
+	err := r.db.Model(&entity.Task{}).
+		Where("id = ?", taskId).
+		Updates(mapData).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+} 

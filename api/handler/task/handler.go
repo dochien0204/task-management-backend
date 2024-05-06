@@ -19,5 +19,9 @@ func MakeHandlers(app *gin.Engine, taskService task.UseCase, verifier util.Verif
 		taskGroup.GET("/list", middleware.JWTVerifyMiddleware(verifier), func(ctx *gin.Context) {
 			getListTaskOfProject(ctx, taskService)
 		})
+
+		taskGroup.GET("/detail", middleware.JWTVerifyMiddleware(verifier), func(ctx *gin.Context) {
+			getTaskDetail(ctx, taskService)
+		})
 	}
 }
