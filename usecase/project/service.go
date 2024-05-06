@@ -71,7 +71,7 @@ func (s Service) GetListProjectOfUser(userId, page, size int, sortType, sortBy s
 	return s.projectRepo.GetListProjectOfUser(userId, page, size, sortType, sortBy)
 }
 
-func (s Service) AddListMemberToProject(userId, projectId int, listUserId []int) error {
+func (s Service) AddListMemberToProject(userId, projectId, roleId int, listUserId []int) error {
 	listUserProjectRole := []*entity.UserProjectRole{}
 
 	//Check user is owner of project
@@ -89,17 +89,11 @@ func (s Service) AddListMemberToProject(userId, projectId int, listUserId []int)
 		return entity.ErrForbidden
 	}
 
-	//Get role member project
-	roleMemberProject, err := s.roleRepo.FindByCode(string(define.MEMBER), string(define.PROJECT))
-	if err != nil {
-		return err
-	}
-
 	for _, userId := range listUserId {
 		userProjectRole := &entity.UserProjectRole{
 			ProjectId: projectId,
 			UserId:    userId,
-			RoleId:    roleMemberProject.Id,
+			RoleId:    roleId,
 		}
 
 		listUserProjectRole = append(listUserProjectRole, userProjectRole)

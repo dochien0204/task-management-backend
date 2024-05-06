@@ -106,7 +106,7 @@ func addListMemberToProject(ctx *gin.Context, projectService project.UseCase) {
 	}
 
 	trxHandle := ctx.MustGet("db_trx").(*gorm.DB)
-	err = projectService.WithTrx(trxHandle).AddListMemberToProject(claims.UserId, payload.ProjectId, payload.ListUserId)
+	err = projectService.WithTrx(trxHandle).AddListMemberToProject(claims.UserId, payload.ProjectId, payload.RoleId, payload.ListUserId)
 	if err != nil {
 		switch err {
 		case entity.ErrForbidden:

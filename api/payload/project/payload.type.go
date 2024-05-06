@@ -9,4 +9,5 @@ type ProjectPayload struct {
 type ListUserIdProjectPayload struct {
 	ProjectId  int   `json:"projectId"`
 	ListUserId []int `json:"listUserId"`
+	RoleId int `json:"roleId"`
 }
