@@ -59,3 +59,17 @@ func (s Service) CreateTask(userId int, payload taskPayload.TaskPayload) error {
 	}
 	return nil
 }
+
+func (s Service) GetListTaskOfProject(projectId int, page, size int, sortType, sortBy string) ([]*entity.Task, []*entity.Status, error) {
+	listStatusTask, err := s.statusRepo.FindByType(define.TASK_CODE)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	listTask, err := s.taskRepo.GetListTaskOfProject(projectId, page, size, sortBy, sortType)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return listTask, listStatusTask, nil 
+}

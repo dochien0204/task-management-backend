@@ -9,6 +9,7 @@ import (
 	"source-base-go/entity"
 	"source-base-go/infrastructure/repository/util"
 	"source-base-go/usecase/task"
+	"strconv"
 
 	"github.com/gin-contrib/i18n"
 	"github.com/gin-gonic/gin"
@@ -48,5 +49,40 @@ func createTask(ctx *gin.Context, taskService task.UseCase) {
 		Message: i18n.MustGetMessage(config.SUCCESS),
 	}
 
+	ctx.JSON(http.StatusOK, response)
+}
+
+func getListTaskOfProject(ctx *gin.Context, taskService task.UseCase) {
+	projectId := ctx.Query("projectId")
+	projectIdConv, _ := strconv.Atoi(projectId)
+	page := util.GetPage(ctx, "page")
+	pageSize := util.GetPageSize(ctx, "size")
+	sortBy := ctx.Query("sortBy")
+	sortType := ctx.Query("sortType")
+
+	//Get URL param
+	token, err := util.GetToken(ctx)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	_, err = util.ParseAccessToken(token)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	listTask, listStatus, err := taskService.GetListTaskOfProject(projectIdConv, page, pageSize, sortType, sortBy)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, err)
+		return
+	}
+
+	response := presenter.BasicResponse{
+		Status:  fmt.Sprint(http.StatusOK),
+		Message: i18n.MustGetMessage(config.SUCCESS),
+		Results: convertListTaskToPresenter(listTask, listStatus),
+	}
 	ctx.JSON(http.StatusOK, response)
 }

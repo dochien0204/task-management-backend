@@ -12,7 +12,9 @@ type Task struct {
 	StatusId int
 	CategoryId int
 	ProjectId int
-
+	Assignee     *User `gorm:"foreignKey:AssigneeId"`
+    User         *User `gorm:"foreignKey:UserId"`
+	Category *Category
 	StartDate time.Time
 	DueDate time.Time
 	CreatedAt time.Time

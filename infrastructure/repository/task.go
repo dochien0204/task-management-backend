@@ -1,8 +1,10 @@
 package repository
 
 import (
+	"fmt"
 	"log"
 	"source-base-go/entity"
+	"source-base-go/infrastructure/repository/util"
 
 	"gorm.io/gorm"
 )
@@ -36,4 +38,43 @@ func (r TaskRepository) Create(data *entity.Task) error {
 	}
 
 	return nil
+}
+
+func (r TaskRepository) GetListTaskOfProject(projectId int, page, size int, sortType, sortBy string) ([]*entity.Task, error) {
+	offset := util.CalculateOffset(page, size)
+	if sortType == "" && sortBy == "" {
+		sortType = "DESC"
+		sortBy = "project.created_at"
+	}
+	if sortType == "" {
+		sortType = "DESC"
+	}
+
+	switch sortBy {
+	case "createdAt":
+		sortBy = "task.created_at"
+
+	case "updatedAt":
+		sortBy = "task.updated_at"
+
+	default:
+		sortBy = "task.created_at"
+	}
+
+	listTask := []*entity.Task{}
+	err := r.db.Model(&entity.Task{}).
+		Preload("User").
+		Preload("Assignee").
+		Preload("Category").
+		Where("project_id = ?", projectId).
+		Offset(offset).
+		Limit(size).
+		Order(fmt.Sprintf("%v %v", sortBy, sortType)).
+		Find(&listTask).Error
+	
+	if err != nil {
+		return nil, err
+	}
+
+	return listTask, nil
 }

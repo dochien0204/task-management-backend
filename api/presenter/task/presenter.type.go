@@ -1,2 +1,28 @@
 package presenter
 
+type ListTaskPresenter struct {
+	Status *Status `json:"status"`
+	ListTask []*Task `json:"listTask"`
+}
+
+type Task struct {
+	Id int `json:"id"`
+	Name string `json:"name"`
+	Description string `json:"string"`
+	Category *Category `json:"category"`
+}
+
+type Category struct {
+	Id int `json:"id"`
+	Code string `json:"code"`
+	Name string `json:"name"`
+	Type string `json:"type"`
+}
+
+type Status struct {
+	Id          int    `json:"id"`
+	Code        string `json:"code"`
+	Name        string `json:"name"`
+	Type        string `json:"type"`
+	Description string `json:"description"`
+}
