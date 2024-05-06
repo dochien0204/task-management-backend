@@ -10,6 +10,7 @@ type Task struct {
 	ReviewerId int
 	UserId int
 	StatusId int
+	Status *Status
 	CategoryId int
 	ProjectId int
 	Assignee     *User `gorm:"foreignKey:AssigneeId"`

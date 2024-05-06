@@ -66,6 +66,12 @@ func convertTaskDetailEntityToPresenter(task *entity.Task) presenter.TaskDetail 
 			Username: task.User.Username,
 			Name: task.User.Name,
 		},
+		Status: &presenter.Status{
+			Id: task.Status.Id,
+			Name: task.Status.Name,
+			Code: task.Status.Code,
+			Type: task.Status.Type,
+		},
 		StartDate: task.StartDate.Format(config.LAYOUT),
 		DueDate: task.DueDate.Format(config.LAYOUT),
 		CreatedAt: task.CreatedAt.Format(config.LAYOUT),

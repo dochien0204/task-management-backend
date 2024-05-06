@@ -36,6 +36,7 @@ type TaskDetail struct {
 	Assignee *User `json:"assignee"`
 	Reviewer *User `json:"reviewer"`
 	StartDate string `json:"startDate"`
+	Status *Status `json:"status"`
 	DueDate string `json:"dueDate"`
 	CreatedAt string `json:"createdAt"`
 	UpdatedAt string `json:"updatedAt"`
