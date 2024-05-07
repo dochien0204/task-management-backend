@@ -2,7 +2,7 @@
   "name": "source-base-go",
   "env": "local",
   "host": {
-    "address": "0.0.0.0",
+    "address": "localhost",
     "port": 8000
   },
   "jwt": {
