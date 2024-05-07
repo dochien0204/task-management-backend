@@ -16,15 +16,15 @@
   "database": {
     "postgres": {
       "timeout": 5000,
-      "host": "localhost",
+      "host": "57.180.8.29",
       "port": "5432",
-      "dbname": "task_management",
+      "dbname": "postgres",
       "user": "postgres",
-      "password": "root"
+      "password": "secret"
     }
   },
   "redis": {
-    "host": "localhost",
+    "host": "57.180.8.29",
     "port": "6379"
   }
 }

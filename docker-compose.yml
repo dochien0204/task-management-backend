@@ -1,8 +1,8 @@
-version: '3.9'
+version: "3.9"
 services:
   api:
     container_name: source-base-backend
-    build: 
+    build:
       context: .
       dockerfile: ./Dockerfile
     restart: always
@@ -19,21 +19,21 @@ services:
     image: redis:6.2-alpine
     restart: always
     ports:
-      - '6380:6379'
-    volumes: 
+      - "6379:6379"
+    volumes:
       - cache:/data
   database:
     container_name: source-base-database
-    image: postgres:14-alpine
+    image: postgres
     restart: always
     ports:
-      - 5434:5432
-    volumes: 
+      - 5432:5432
+    volumes:
       - db:/var/lib/postgresql/data
     environment:
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PASSWORD=secret
       - POSTGRES_USER=postgres
-      - POSTGRES_DB=base-go
+      - POSTGRES_DB=task-management
 volumes:
   db:
     driver: local
