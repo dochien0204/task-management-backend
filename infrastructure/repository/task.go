@@ -108,8 +108,8 @@ func (r TaskRepository) UpdateTask(taskId int, mapData map[string]interface{}) e
 
 func (r TaskRepository) UpdateStatusTask(taskId int, statusId int) error {
 	err := r.db.Model(&entity.Task{}).
-		Update("status_id", statusId).
-		Where("id = ?", taskId).Error
+		Where("id = ?", taskId).
+		Update("status_id", statusId).Error
 	if err != nil {
 		return err
 	}
