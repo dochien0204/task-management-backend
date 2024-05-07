@@ -23,6 +23,6 @@ https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.giti
 
 # Go workspace file
 go.work
-config.json
+config/config.json
 
 .vscode
