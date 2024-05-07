@@ -27,5 +27,8 @@ func MakeHandlers(app *gin.Engine, taskService task.UseCase, verifier util.Verif
 		taskGroup.PUT("/update", middleware.JWTVerifyMiddleware(verifier), tx.DBTransactionMiddleware(), func(ctx *gin.Context) {
 			updateTask(ctx, taskService)
 		})
+		taskGroup.PUT("/update-status", middleware.JWTVerifyMiddleware(verifier), tx.DBTransactionMiddleware(), func(ctx *gin.Context) {
+			updateTaskStatus(ctx, taskService)
+		})
 	}
 }

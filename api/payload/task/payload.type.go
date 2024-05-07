@@ -22,3 +22,8 @@ type TaskUpdatePayload struct {
 	StartDate string `json:"startDate"`
 	DueDate string `json:"dueDate"`
 }
+
+type TaskStatusUpdatePayload struct {
+	Id int `json:"id"`
+	StatusId int `json:"statusId"`
+}

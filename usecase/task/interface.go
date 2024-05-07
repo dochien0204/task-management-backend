@@ -15,6 +15,7 @@ type TaskRepository interface {
 	GetListTaskOfProject(projectId int, page, size int, sortType, sortBy string) ([]*entity.Task, error)
 	GetTaskDetail(taskId int) (*entity.Task, error)
 	UpdateTask(taskId int, mapData map[string]interface{}) error
+	UpdateStatusTask(taskId int, statusId int) error
 }
 
 type StatusRepository interface {
@@ -29,4 +30,5 @@ type UseCase interface {
 	GetListTaskOfProject(projectId int, page, size int, sortType, sortBy string) ([]*entity.Task, []*entity.Status, error)
 	GetTaskDetail(taskId int) (*entity.Task, error)
 	UpdateTask(payload payload.TaskUpdatePayload) error
+	UpdateTaskStatus(taskId, statusId int) error
 }

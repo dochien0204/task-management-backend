@@ -94,3 +94,7 @@ func (s Service) UpdateTask(data payload.TaskUpdatePayload) error {
 
 	return s.taskRepo.UpdateTask(data.Id, mapTask)
 }
+
+func (s Service) UpdateTaskStatus(taskId, statusId int) error {
+	return s.taskRepo.UpdateStatusTask(taskId, statusId)
+}

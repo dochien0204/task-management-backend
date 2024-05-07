@@ -114,7 +114,31 @@ func updateTask(ctx *gin.Context, taskService task.UseCase) {
 		return
 	}
 
-	err = taskService.UpdateTask(payload)
+	trxHandle := ctx.MustGet("db_trx").(*gorm.DB)
+	err = taskService.WithTrx(trxHandle).UpdateTask(payload)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	response := presenter.BasicResponse {
+		Status: fmt.Sprint(http.StatusOK),
+		Message: i18n.MustGetMessage(config.SUCCESS),
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
+
+func updateTaskStatus(ctx *gin.Context, taskService task.UseCase) {
+	var payload payload.TaskStatusUpdatePayload
+	err := ctx.ShouldBindJSON(&payload)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	trxHandle := ctx.MustGet("db_trx").(*gorm.DB)
+	err = taskService.WithTrx(trxHandle).UpdateTaskStatus(payload.Id, payload.StatusId)
 	if err != nil {
 		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
 		return
