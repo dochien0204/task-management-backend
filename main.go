@@ -134,6 +134,10 @@ func getConfig() config.EnvConfig {
 			Host:     config.GetString("database.postgres.host"),
 			Port:     config.GetString("database.postgres.port"),
 		},
+		AWS: config.AWSConfig{
+			AccessKey: config.GetString("aws.accessKey"),
+			SecretKey: config.GetString("aws.secretKey"),
+		},
 		Redis: config.RedisConfig{
 			Host: config.GetString("redis.host"),
 			Port: config.GetString("redis.port"),
