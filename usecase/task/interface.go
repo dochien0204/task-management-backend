@@ -23,6 +23,12 @@ type StatusRepository interface {
 	FindByType(typeStatus string) ([]*entity.Status, error)
 }
 
+type TaskDocumentRepository interface {
+	WithTrx(trxHandle *gorm.DB) repository.TaskDocumentRepository
+
+	CreateDocumentsForTask(listData []*entity.TaskDocument) error
+}
+
 type UseCase interface {
 	WithTrx(trxHandle *gorm.DB) Service
 

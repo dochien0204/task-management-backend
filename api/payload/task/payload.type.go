@@ -9,6 +9,12 @@ type TaskPayload struct {
 	ProjectId int `json:"projectId"`
 	StartDate string `json:"startDate"`
 	DueDate string `json:"dueDate"`
+	Documents []*TaskDocumentPayload `json:"documents"`
+}
+
+type TaskDocumentPayload struct {
+	File string `json:"file"`
+	Name string `json:"name"`
 }
 
 type TaskUpdatePayload struct {
