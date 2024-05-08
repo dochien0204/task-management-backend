@@ -35,9 +35,20 @@ type TaskDetail struct {
 	User *User `json:"createdBy"`
 	Assignee *User `json:"assignee"`
 	Reviewer *User `json:"reviewer"`
+	Documents []*Document `json:"documents"`
 	StartDate string `json:"startDate"`
 	Status *Status `json:"status"`
 	DueDate string `json:"dueDate"`
+	CreatedAt string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
+}
+
+type Document struct {
+	Id int `json:"id"`
+	Name string `json:"name"`
+	FileName string `json:"fileName"`
+	TaskId int `json:"taskId"`
+
 	CreatedAt string `json:"createdAt"`
 	UpdatedAt string `json:"updatedAt"`
 }

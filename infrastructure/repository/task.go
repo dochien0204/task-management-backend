@@ -86,6 +86,7 @@ func (r TaskRepository) GetTaskDetail(taskId int) (*entity.Task, error) {
 		Preload("Assignee").
 		Preload("Category").
 		Preload("Status").
+		Preload("Documents").
 		Where("id = ?", taskId).
 		First(&task).Error
 	if err != nil {

@@ -4,6 +4,7 @@ import (
 	presenter "source-base-go/api/presenter/task"
 	"source-base-go/config"
 	"source-base-go/entity"
+	"time"
 )
 
 func convertListTaskToPresenter(listTask []*entity.Task, listStatus []*entity.Status) []*presenter.ListTaskPresenter {
@@ -41,7 +42,7 @@ func convertListTaskToPresenter(listTask []*entity.Task, listStatus []*entity.St
 }
 
 func convertTaskDetailEntityToPresenter(task *entity.Task) presenter.TaskDetail {
-	return presenter.TaskDetail{
+	taskPresenter := presenter.TaskDetail{
 		Id: task.Id,
 		Name: task.Name,
 		Description: task.Description,
@@ -77,4 +78,21 @@ func convertTaskDetailEntityToPresenter(task *entity.Task) presenter.TaskDetail 
 		CreatedAt: task.CreatedAt.Format(config.LAYOUT),
 		UpdatedAt: task.UpdatedAt.Format(config.LAYOUT),
 	}
+
+	listDocumentPresenter := []*presenter.Document{}
+	for _, document := range task.Documents {
+		documentPresenter := &presenter.Document {
+			Id: document.Id,
+			Name: document.Name,
+			FileName: document.File,
+			TaskId: document.TaskId,
+			CreatedAt: document.CreatedAt.Format(config.LAYOUT),
+			UpdatedAt: document.UpdatedAt.Format(time.Layout),
+		}
+
+		listDocumentPresenter = append(listDocumentPresenter, documentPresenter)
+	}
+
+	taskPresenter.Documents = listDocumentPresenter
+	return taskPresenter
 }
