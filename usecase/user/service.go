@@ -15,15 +15,17 @@ type Service struct {
 	roleRepo       RoleRepository
 	userRoleRepo   UserRoleRepository
 	StatusRepo 	StatusRepository
+	emailRepo EmailRepository
 	verifier       Verifier
 }
 
-func NewService(userRepository UserRepository, roleRepo RoleRepository, userRoleRepo UserRoleRepository, statusRepo StatusRepository, verifier Verifier) *Service {
+func NewService(userRepository UserRepository, roleRepo RoleRepository, userRoleRepo UserRoleRepository, statusRepo StatusRepository, emailRepo EmailRepository, verifier Verifier) *Service {
 	return &Service{
 		userRepository: userRepository,
 		roleRepo:       roleRepo,
 		userRoleRepo:   userRoleRepo,
 		StatusRepo: statusRepo,
+		emailRepo: emailRepo,
 		verifier:       verifier,
 	}
 }
@@ -95,6 +97,30 @@ func (s Service) Register(user *entity.User) error {
 
 	if isExists {
 		return entity.ErrAccountAlreadyExists
+	}
+
+	isEmailExists, err := s.userRepository.IsUserEmailExists(user.Email)
+	if err != nil {
+		return entity.ErrBadRequest
+	}
+
+	if isEmailExists {
+		return entity.ErrEmailAlreadyExists
+	}
+
+	//Generate random password
+	randomPassword, err := util.GenerateRandomString(8)
+	if err != nil {
+		return entity.ErrBadRequest
+	}
+
+	user.Password = randomPassword
+
+	//Send mail
+	message := fmt.Sprintf("Mật khẩu cho account đăng nhập PMA của bạn là: %v", randomPassword)
+	err = s.emailRepo.SendMailPasswordForUser(message, []string{user.Email}, "TẠO TÀI KHOẢN")
+	if err != nil {
+		return entity.ErrBadRequest
 	}
 
 	//Create user

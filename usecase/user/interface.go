@@ -20,6 +20,7 @@ type UserRepository interface {
 	IsUserExists(username string) (bool, error)
 	GetListUser(statusId, page, size int, sortType, sortBy string) ([]*entity.User, error)
 	CountListUser(statusId int) (int, error)
+	IsUserEmailExists(email string) (bool, error)
 	UpdateAvatar(userId int, avatar string) error
 }
 
@@ -38,6 +39,10 @@ type UserRoleRepository interface {
 
 type StatusRepository interface {
 	GetStatusByCodeAndType(typeStatus string, code string) (*entity.Status, error)
+}
+
+type EmailRepository interface {
+	SendMailPasswordForUser(body string, to []string, subject string) error
 }
 
 type UseCase interface {
