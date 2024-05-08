@@ -23,5 +23,8 @@ func MakeHandlers(app *gin.Engine, userService user.UseCase, verifier util.Verif
 		userGroup.PUT("/update-avatar", middleware.JWTVerifyMiddleware(verifier), func(ctx *gin.Context) {
 			updateAvatar(ctx, userService)
 		})
+		userGroup.GET("get-avatar", func(ctx *gin.Context) {
+			getAvatarUrl(ctx)
+		})
 	}
 }
