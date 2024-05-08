@@ -74,3 +74,21 @@ func getListUser(ctx *gin.Context, userService user.UseCase) {
 
 	ctx.JSON(http.StatusOK, response)
 }
+
+func getPresignPutURLS3(ctx *gin.Context) {
+	keyName := ctx.Query("keyName")
+
+	presginUrl, err := util.GeneratePresignUploadS3(keyName)
+
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, err)
+		return
+	}
+
+	response := presenter.BasicResponse{
+		Status:  fmt.Sprint(http.StatusOK),
+		Message: ginI18n.MustGetMessage(config.SUCCESS),
+		Results: presginUrl,
+	}
+	ctx.JSON(http.StatusOK, response)
+}

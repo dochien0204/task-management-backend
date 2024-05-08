@@ -17,5 +17,8 @@ func MakeHandlers(app *gin.Engine, userService user.UseCase, verifier util.Verif
 		userGroup.GET("/list", middleware.JWTVerifyMiddleware(verifier), func(ctx *gin.Context) {
 			getListUser(ctx, userService)
 		})
+		userGroup.GET("/avatar/presign-link", func(ctx *gin.Context) {
+			getPresignPutURLS3(ctx)
+		})
 	}
 }
