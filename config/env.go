@@ -15,10 +15,16 @@ type (
 		Port string
 	}
 
+	AWSConfig struct {
+		AccessKey string
+		SecretKey string
+	}
+
 	EnvConfig struct {
 		Host     string
 		Port     int
 		Postgres PostgresConfig
 		Redis    RedisConfig
+		AWS		 AWSConfig
 	}
 )

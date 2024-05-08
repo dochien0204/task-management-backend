@@ -6,6 +6,7 @@ import (
 	otherConfig "source-base-go/config"
 
 	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go/aws"
 )
@@ -34,8 +35,10 @@ func GeneratePresignURLS3(keyName string) (string, error) {
 }
 
 func GeneratePresignUploadS3(keyName string) (string, error) {
-
-	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("ap-northeast-1"))
+	as := otherConfig.GetString("aws.accessKey")
+	sc := otherConfig.GetString("aws.secretKey")
+	creds := credentials.NewStaticCredentialsProvider(as, sc, "")
+	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("ap-northeast-1"), config.WithCredentialsProvider(creds))
 	if err != nil {
 		return "", err
 	}
