@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"source-base-go/api/presenter"
 	userPresenter "source-base-go/api/presenter/user"
 	"source-base-go/config"
 	"source-base-go/entity"
@@ -42,6 +43,33 @@ func getUserProfile(ctx *gin.Context, userService user.UseCase) {
 		Status:  fmt.Sprint(http.StatusOK),
 		Message: ginI18n.MustGetMessage(config.SUCCESS),
 		Result:  convertUserEntityToPresenter(data),
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
+
+func getListUser(ctx *gin.Context, userService user.UseCase) {
+	page := util.GetPage(ctx, "page")
+	pageSize := util.GetPageSize(ctx, "size")
+	sortBy := ctx.Query("sortBy")
+	sortType := ctx.Query("sortType")
+
+	listUser, count, err := userService.GetListUser(page, pageSize, sortType, sortBy)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	response := presenter.PaginationResponse {
+		Status: fmt.Sprint(http.StatusOK),
+		Message: ginI18n.MustGetMessage(config.SUCCESS),
+		Results: convertListUserToPresenter(listUser),
+		Pagination: presenter.Pagination {
+			Count: count,
+			NumPages: int(util.CalculateTotalPages(count, pageSize)),
+			DisplayRecord: len(listUser),
+			Page: page,
+		},
 	}
 
 	ctx.JSON(http.StatusOK, response)

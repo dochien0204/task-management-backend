@@ -2,9 +2,11 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"source-base-go/entity"
 	"source-base-go/infrastructure/repository/define"
+	"source-base-go/infrastructure/repository/util"
 
 	"gorm.io/gorm"
 )
@@ -97,4 +99,52 @@ func (r UserRepository) IsUserExists(username string) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func (r UserRepository) GetListUser(statusId, page, size int, sortType, sortBy string) ([]*entity.User, error) {
+	listUser := []*entity.User{}
+	offset := util.CalculateOffset(page, size)
+	if sortType == "" && sortBy == "" {
+		sortType = "DESC"
+		sortBy = "created_at"
+	}
+	if sortType == "" {
+		sortType = "DESC"
+	}
+
+	switch sortBy {
+	case "createdAt":
+		sortBy = "created_at"
+
+	case "updatedAt":
+		sortBy = "updated_at"
+
+	default:
+		sortBy = "created_at"
+	}
+
+	err := r.db.Model(&entity.User{}).
+		Where("status_id = ?", statusId).
+		Offset(offset).
+		Limit(size).
+		Order(fmt.Sprintf("%v %v", sortBy, sortType)).
+		Find(&listUser).Error
+	
+	if err != nil {
+		return nil, err
+	}
+
+	return listUser, nil
+}
+
+func (r UserRepository) CountListUser(statusId int) (int, error) {
+	var count int64
+	err := r.db.Model(&entity.User{}).
+		Where("status_id = ?", statusId).
+		Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+
+	return int(count), nil
 }

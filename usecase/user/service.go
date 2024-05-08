@@ -13,14 +13,16 @@ type Service struct {
 	userRepository UserRepository
 	roleRepo       RoleRepository
 	userRoleRepo   UserRoleRepository
+	StatusRepo 	StatusRepository
 	verifier       Verifier
 }
 
-func NewService(userRepository UserRepository, roleRepo RoleRepository, userRoleRepo UserRoleRepository, verifier Verifier) *Service {
+func NewService(userRepository UserRepository, roleRepo RoleRepository, userRoleRepo UserRoleRepository, statusRepo StatusRepository, verifier Verifier) *Service {
 	return &Service{
 		userRepository: userRepository,
 		roleRepo:       roleRepo,
 		userRoleRepo:   userRoleRepo,
+		StatusRepo: statusRepo,
 		verifier:       verifier,
 	}
 }
@@ -112,4 +114,23 @@ func (s Service) Register(user *entity.User) error {
 	}
 
 	return nil
+}
+
+func (s Service) GetListUser(page, size int, sortType, sortBy string) ([]*entity.User, int, error) {
+	statusUserActive, err := s.StatusRepo.GetStatusByCodeAndType(string(define.USER), string(define.ACTIVE))
+	if err != nil {
+		return nil, 0, err
+	}
+
+	listUser, err := s.userRepository.GetListUser(statusUserActive.Id, page, size, sortType, sortBy)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	count, err := s.userRepository.CountListUser(statusUserActive.Id)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return listUser, count, nil 
 }

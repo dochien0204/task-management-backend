@@ -14,5 +14,8 @@ func MakeHandlers(app *gin.Engine, userService user.UseCase, verifier util.Verif
 		userGroup.GET("/profile", func(ctx *gin.Context) {
 			getUserProfile(ctx, userService)
 		})
+		userGroup.GET("/list", middleware.JWTVerifyMiddleware(verifier), func(ctx *gin.Context) {
+			getListUser(ctx, userService)
+		})
 	}
 }

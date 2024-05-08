@@ -10,7 +10,11 @@ type User struct {
 	Id       int `gorm:"primaryKey"`
 	Username string
 	Name     string
+	PhoneNumber string
+	Email string
+	Address string
 	Password string
+	Avatar string
 	StatusId int
 	Status   *Status
 

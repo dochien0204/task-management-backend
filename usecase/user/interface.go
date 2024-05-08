@@ -18,6 +18,8 @@ type UserRepository interface {
 	FindByUsername(userName string) (*entity.User, error)
 	CreateUser(user *entity.User) error
 	IsUserExists(username string) (bool, error)
+	GetListUser(statusId, page, size int, sortType, sortBy string) ([]*entity.User, error)
+	CountListUser(statusId int) (int, error)
 }
 
 type RoleRepository interface {
@@ -33,10 +35,15 @@ type UserRoleRepository interface {
 	AddRoleForUser(userId, roleId int) error
 }
 
+type StatusRepository interface {
+	GetStatusByCodeAndType(typeStatus string, code string) (*entity.Status, error)
+}
+
 type UseCase interface {
 	WithTrx(trxHandle *gorm.DB) Service
 
 	GetUserProfile(userId int) (*entity.User, error)
 	Login(username string, password string) (*entity.TokenPair, *entity.User, error)
 	Register(user *entity.User) error
+	GetListUser(page, size int, sortType, sortBy string) ([]*entity.User, int, error)
 }

@@ -78,7 +78,7 @@ func main() {
 	taskRepo := repository.NewTaskRepository(db)
 
 	//Define service
-	userService := user.NewService(userRepo, roleRepo, userRoleRepo, verifier)
+	userService := user.NewService(userRepo, roleRepo, userRoleRepo, statusRepo, verifier)
 	roleServce := role.NewService(roleRepo)
 	projectService := project.NewService(projectRepo, userProjectRoleRepo, roleRepo)
 	masterDataService := masterdata.NewService(statusRepo)
