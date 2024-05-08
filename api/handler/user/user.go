@@ -128,3 +128,41 @@ func updateAvatar(ctx *gin.Context, userService user.UseCase) {
 
 	ctx.JSON(http.StatusOK, response)
 }
+
+func getAvatarUrl(ctx *gin.Context) {
+	token, err := util.GetToken(ctx)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	_, err = util.ParseAccessToken(token)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	avatar := ctx.Query("avatar")
+	userId := ctx.Query("userId")
+	userIdInt, err := strconv.Atoi(userId)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	urlView, err := util.GeneratePresignViewAvatarURLS3(userIdInt, avatar)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	response := presenter.BasicResponse{
+		Status: fmt.Sprint(http.StatusOK),
+		Message: ginI18n.MustGetMessage(config.SUCCESS),
+		Results: map[string]interface{}{
+			"url": urlView,
+		},
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
