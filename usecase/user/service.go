@@ -1,6 +1,7 @@
 package user
 
 import (
+	"fmt"
 	"source-base-go/config"
 	"source-base-go/entity"
 	"source-base-go/infrastructure/repository/define"
@@ -133,4 +134,23 @@ func (s Service) GetListUser(page, size int, sortType, sortBy string) ([]*entity
 	}
 
 	return listUser, count, nil 
+}
+
+func (s Service) UpdateAvatar(userId int, avatar string) error {
+	if avatar != "" {
+		path := fmt.Sprintf("user/%d/%v", userId, avatar)
+		avatarPath := fmt.Sprintf("https://%v.s3.%v.amazon.com/%v", config.S3_BUCKET_NAME, config.REGION, path)
+
+		err := s.userRepository.UpdateAvatar(userId, avatarPath)
+		if err != nil {
+			return err
+		}
+	} else {
+		err := s.userRepository.UpdateAvatar(userId, avatar)
+		if err != nil {
+			return err
+		}
+	}
+	
+	return nil
 }

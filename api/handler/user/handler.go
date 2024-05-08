@@ -20,5 +20,8 @@ func MakeHandlers(app *gin.Engine, userService user.UseCase, verifier util.Verif
 		userGroup.GET("/avatar/presign-link", func(ctx *gin.Context) {
 			getPresignPutURLS3(ctx)
 		})
+		userGroup.PUT("/update-avatar", middleware.JWTVerifyMiddleware(verifier), func(ctx *gin.Context) {
+			updateAvatar(ctx, userService)
+		})
 	}
 }

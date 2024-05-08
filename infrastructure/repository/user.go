@@ -148,3 +148,15 @@ func (r UserRepository) CountListUser(statusId int) (int, error) {
 
 	return int(count), nil
 }
+
+func (r UserRepository) UpdateAvatar(userId int, avatar string) error {
+	err := r.db.Model(&entity.User{}).
+		Where("id = ?", userId).
+		Update("avatar", avatar).Error
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
