@@ -23,6 +23,10 @@
       "password": "secret"
     }
   },
+  "aws": {
+    "accessKey": "AKIA3ZEM3PRGCNT6LHOV",
+    "secretKey": "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"
+  },
   "redis": {
     "host": "57.180.8.29",
     "port": "6379"
