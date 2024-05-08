@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	payload "source-base-go/api/payload/user"
 	"source-base-go/api/presenter"
 	userPresenter "source-base-go/api/presenter/user"
 	"source-base-go/config"
@@ -90,5 +91,40 @@ func getPresignPutURLS3(ctx *gin.Context) {
 		Message: ginI18n.MustGetMessage(config.SUCCESS),
 		Results: presginUrl,
 	}
+	ctx.JSON(http.StatusOK, response)
+}
+
+func updateAvatar(ctx *gin.Context, userService user.UseCase) {
+	var payload payload.UpdateAvatar
+
+	err := ctx.ShouldBindJSON(&payload)
+	if err != nil {
+		util.HandleException(ctx, http.StatusOK, entity.ErrBadRequest)
+		return
+	}
+
+	token, err := util.GetToken(ctx)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	claims, err := util.ParseAccessToken(token)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	err = userService.UpdateAvatar(claims.UserId, payload.Avatar)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	response := presenter.BasicResponse{
+		Status: fmt.Sprint(http.StatusOK),
+		Message: ginI18n.MustGetMessage(config.SUCCESS),
+	}
+
 	ctx.JSON(http.StatusOK, response)
 }

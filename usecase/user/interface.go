@@ -20,6 +20,7 @@ type UserRepository interface {
 	IsUserExists(username string) (bool, error)
 	GetListUser(statusId, page, size int, sortType, sortBy string) ([]*entity.User, error)
 	CountListUser(statusId int) (int, error)
+	UpdateAvatar(userId int, avatar string) error
 }
 
 type RoleRepository interface {
@@ -46,4 +47,5 @@ type UseCase interface {
 	Login(username string, password string) (*entity.TokenPair, *entity.User, error)
 	Register(user *entity.User) error
 	GetListUser(page, size int, sortType, sortBy string) ([]*entity.User, int, error)
+	UpdateAvatar(userId int, avatar string) error
 }
