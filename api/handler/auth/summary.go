@@ -77,8 +77,11 @@ func register(ctx *gin.Context, authService user.UseCase) {
 		case entity.ErrAccountAlreadyExists:
 			util.HandleException(ctx, http.StatusBadRequest, err)
 			return
+		case entity.ErrInternalServerError:
+			util.HandleException(ctx, http.StatusInternalServerError, err)
+			return
 		default:
-			util.HandleException(ctx, http.StatusInternalServerError, entity.ErrInternalServerError)
+			util.HandleException(ctx, http.StatusBadRequest, err)
 			return
 		}
 	}

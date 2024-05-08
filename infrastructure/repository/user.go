@@ -160,3 +160,29 @@ func (r UserRepository) UpdateAvatar(userId int, avatar string) error {
 
 	return nil
 }
+
+func (r UserRepository) ChangePassword(userId int , password string) error {
+	err := r.db.Model(&entity.User{}).
+		Where("id = ?", userId).
+		Update("password", password).Error
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r UserRepository) IsUserEmailExists(email string) (bool, error) {
+	var user entity.User
+	err := r.db.Where("email = ?", email).First(&user).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return false, nil
+		} else {
+			return false, err
+		}
+	}
+
+	return true, nil
+}
