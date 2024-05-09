@@ -96,3 +96,61 @@ func convertTaskDetailEntityToPresenter(task *entity.Task) presenter.TaskDetail 
 	taskPresenter.Documents = listDocumentPresenter
 	return taskPresenter
 }
+
+func convertListTaskByDateToPresenter(listTask []*entity.Task) []*presenter.ListTaskByDatePresenter {
+	listPresenter := []*presenter.ListTaskByDatePresenter{}
+	mapDate := map[string][]*presenter.TaskDetail{}
+	for _, task := range listTask {
+		//_, isExists := mapDate[task.DueDate.Format(config.DATE_LAYOUT)]
+		taskPresenter := &presenter.TaskDetail{
+			Id: task.Id,
+		Name: task.Name,
+		Description: task.Description,
+		Category: &presenter.Category{
+			Id: task.Category.Id,
+			Name: task.Category.Name,
+			Code: task.Category.Code,
+			Type: task.Category.Type,
+		},
+		User: &presenter.User{
+			Id: task.User.Id,
+			Username: task.User.Username,
+			Name: task.User.Name,
+		},
+		Assignee: &presenter.User{
+			Id: task.User.Id,
+			Username: task.User.Username,
+			Name: task.User.Name,
+		},
+		Reviewer: &presenter.User{
+			Id: task.User.Id,
+			Username: task.User.Username,
+			Name: task.User.Name,
+		},
+		Status: &presenter.Status{
+			Id: task.Status.Id,
+			Name: task.Status.Name,
+			Code: task.Status.Code,
+			Type: task.Status.Type,
+		},
+		StartDate: task.StartDate.Format(config.LAYOUT),
+		DueDate: task.DueDate.Format(config.LAYOUT),
+		CreatedAt: task.CreatedAt.Format(config.LAYOUT),
+		UpdatedAt: task.UpdatedAt.Format(config.LAYOUT),
+		}
+
+		mapDate[task.DueDate.Format(config.DATE_LAYOUT)] = append(mapDate[task.DueDate.Format(config.DATE_LAYOUT)], taskPresenter)
+	}
+
+	for k, v := range mapDate {
+		listTaskPresenterDetail := &presenter.ListTaskByDatePresenter{
+			Date: k,
+			ListTask: v,
+			Count: len(v),
+		}
+
+		listPresenter = append(listPresenter, listTaskPresenterDetail)
+	}
+
+	return listPresenter
+}

@@ -15,6 +15,7 @@ type Task struct {
 	ProjectId int
 	Assignee     *User `gorm:"foreignKey:AssigneeId"`
     User         *User `gorm:"foreignKey:UserId"`
+	Reviewer *User `gorm:"foreignKey:ReviewerId"`
 	Category *Category
 	Documents []*TaskDocument `gorm:"foreignKey:TaskId"`
 	StartDate time.Time

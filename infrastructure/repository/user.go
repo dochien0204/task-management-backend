@@ -50,6 +50,7 @@ func (r UserRepository) FindByUsername(userName string) (*entity.User, error) {
 	err := r.db.
 		Where("username = ?", userName).
 		Preload("Status").
+		Preload("Role").
 		First(&user).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {

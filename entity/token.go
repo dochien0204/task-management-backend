@@ -6,6 +6,7 @@ type TokenClaims struct {
 	jwt.StandardClaims
 	UserId int    `json:"userId"`
 	Jti    string `json:"jti"`
+	Role string `json:"role"`
 }
 
 type RefreshToken struct {
