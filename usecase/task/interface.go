@@ -29,6 +29,7 @@ type TaskDocumentRepository interface {
 	WithTrx(trxHandle *gorm.DB) repository.TaskDocumentRepository
 
 	CreateDocumentsForTask(listData []*entity.TaskDocument) error
+	DeleteAllTaskDocumentOfTask(taskId int) error
 }
 
 type UseCase interface {

@@ -38,8 +38,14 @@ func (r TaskDocumentRepository) CreateDocumentsForTask(listData []*entity.TaskDo
 	return nil
 }
 
-// func (r TaskDocumentRepository) DeleteAllTaskDocumentOfTask(taskId int) error {
-// 	err := r.db.Model(&entity.TaskDocument{}).
-// 		Where("task_id = ?", taskId).
-// 		Delete().Error
-// }
+func (r TaskDocumentRepository) DeleteAllTaskDocumentOfTask(taskId int) error {
+	err := r.db.
+		Where("task_id = ?", taskId).
+		Delete(&entity.TaskDocument{}).Error
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
