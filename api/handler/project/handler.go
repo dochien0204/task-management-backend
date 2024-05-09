@@ -27,5 +27,9 @@ func MakeHandlers(app *gin.Engine, projectService project.UseCase, verifier util
 		projectGroup.GET("/detail", middleware.JWTVerifyMiddleware(verifier), func(ctx *gin.Context) {
 			getProjectDetail(ctx, projectService)
 		})
+
+		projectGroup.GET("/task/list-member", middleware.JWTVerifyMiddleware(verifier), func(ctx *gin.Context) {
+			getListMemberTaskCount(ctx, projectService)
+		})
 	}
 }

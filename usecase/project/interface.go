@@ -13,6 +13,8 @@ type ProjectRepository interface {
 	FindProjectByName(name string) (*entity.Project, error)
 	CreateProject(data *entity.Project) error
 	GetListProjectOfUser(userId, page, size int, sortType, sortBy string) ([]*entity.Project, error)
+	GetListMemberByProject(projectId int, page, size int, sortType, sortBy string) ([]*entity.UserTaskCount, error)
+	CountListMemberByProject(projectId int) (int, error)
 }
 
 type UserProjectRoleRepository interface {
@@ -34,4 +36,5 @@ type UseCase interface {
 	CreateProject(userId int, project *entity.Project) error
 	GetListProjectOfUser(userId, page, size int, sortType, sortBy string) ([]*entity.Project, error)
 	GetProjectDetail(projectId int) (*entity.UserProjectRole, error)
+	GetListMemberByProject(projectId int, page, size int, sortType, sortBy string) ([]*entity.UserTaskCount, int, error)
 }

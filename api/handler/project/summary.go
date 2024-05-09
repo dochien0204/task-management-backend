@@ -146,3 +146,35 @@ func getProjectDetail(ctx *gin.Context, projectService project.UseCase) {
 	}
 	ctx.JSON(http.StatusOK, response)
 }
+
+func getListMemberTaskCount(ctx *gin.Context, projectService project.UseCase) {
+	page := util.GetPage(ctx, "page")
+	pageSize := util.GetPageSize(ctx, "size")
+	sortBy := ctx.Query("sortBy")
+	sortType := ctx.Query("sortType")
+	projectId := ctx.Query("projectId")
+	projectIdInt, err := strconv.Atoi(projectId)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	listTask, count, err := projectService.GetListMemberByProject(projectIdInt, page, pageSize, sortType, sortBy)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, err)
+		return
+	}
+
+	response := presenter.PaginationResponse{
+		Status:  fmt.Sprint(http.StatusOK),
+		Message: ginI18n.MustGetMessage(config.SUCCESS),
+		Results: convertListMemberTaskCountToPresenter(listTask),
+		Pagination: presenter.Pagination {
+			Count: count,
+			NumPages: int(util.CalculateTotalPages(count, pageSize)),
+			DisplayRecord: len(listTask),
+			Page: page,
+		},
+	}
+	ctx.JSON(http.StatusOK, response)
+}
