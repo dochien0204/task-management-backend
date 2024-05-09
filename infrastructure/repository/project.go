@@ -85,3 +85,41 @@ func (r ProjectRepository) CreateProject(data *entity.Project) error {
 
 	return nil
 }
+
+// func (r ProjectRepository) GetListMemberByProject(projectId int, page, size int, sortType, sortBy string) ([]*entity.User, error){
+// 	offset := util.CalculateOffset(page, size)
+// 	if sortType == "" && sortBy == "" {
+// 		sortType = "DESC"
+// 		sortBy = "created_at"
+// 	}
+// 	if sortType == "" {
+// 		sortType = "DESC"
+// 	}
+
+// 	switch sortBy {
+// 	case "createdAt":
+// 		sortBy = "created_at"
+
+// 	case "updatedAt":
+// 		sortBy = "updated_at"
+
+// 	default:
+// 		sortBy = "created_at"
+// 	}
+
+// 	listUser := []*entity.User{}
+// 	err := r.db.Model(&entity.User{}).
+// 		Select("u.*,")
+// 		Joins("join user_project_role upr on upr.user_id = user.id").
+// 		Where("upr.project_id = ?", projectId).
+// 		Offset(offset).
+// 		Limit(size).
+// 		Order(fmt.Sprint("%v %v", sortBy, sortType)).
+// 		Find(&listUser).Error
+
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	return listUser, nil
+// }

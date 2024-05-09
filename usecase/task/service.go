@@ -34,50 +34,15 @@ func (s Service) WithTrx(trxHandle *gorm.DB) Service {
 }
 
 func (s Service) CreateTask(userId int, payload taskPayload.TaskPayload) error {
-	startDate, err := time.Parse(config.LAYOUT, payload.StartDate)
-	dueDate, err := time.Parse(config.LAYOUT, payload.DueDate)
-	if err != nil {
-		return err
-	}
-	//Status doing
-	status, err := s.statusRepo.GetStatusByCodeAndType(define.TASK_CODE, define.TASK_BACKLOG_STATUS)
-	if err != nil {
-		return err
-	}
-
 	data := &entity.Task {
 		Name: payload.Name,
 		Description: payload.Description,
-		AssigneeId: payload.AssigneeId,
-		ReviewerId: payload.ReviewerId,
-		CategoryId: payload.CategoryId,
 		ProjectId: payload.ProjectId,
 		UserId: userId,
-		StartDate: startDate,
-		DueDate: dueDate,
-		StatusId: status.Id,
+		StatusId: payload.StatusId,
 	}
 
-	err = s.taskRepo.Create(data)
-	if err != nil {
-		return err
-	}
-
-	//Create task document
-	listTaskDocument := []*entity.TaskDocument{}
-	for _, documentPayload := range payload.Documents {
-		path := fmt.Sprintf("task/%d/%v", data.Id, documentPayload.File)
-		fileName := fmt.Sprintf("https://%v.s3.%v.amazon.com/%v", config.S3_BUCKET_NAME, config.REGION, path)
-		document := &entity.TaskDocument{
-			File: fileName,
-			Name: documentPayload.Name,
-			TaskId: data.Id,
-		}
-
-		listTaskDocument = append(listTaskDocument, document)
-	}
-
-	err = s.taskDocumentRepo.CreateDocumentsForTask(listTaskDocument)
+	err := s.taskRepo.Create(data)
 	if err != nil {
 		return err
 	}
@@ -116,7 +81,31 @@ func (s Service) UpdateTask(data payload.TaskUpdatePayload) error {
 	mapTask["start_date"]= startDate
 	mapTask["due_date"] = dueDate
 
-	return s.taskRepo.UpdateTask(data.Id, mapTask)
+	err := s.taskRepo.UpdateTask(data.Id, mapTask)
+	if err != nil {
+		return err
+	}
+
+	//Create task document
+	listTaskDocument := []*entity.TaskDocument{}
+	for _, documentPayload := range data.Documents {
+		path := fmt.Sprintf("task/%d/%v", data.Id, documentPayload.File)
+		fileName := fmt.Sprintf("https://%v.s3.%v.amazon.com/%v", config.S3_BUCKET_NAME, config.REGION, path)
+		document := &entity.TaskDocument{
+			File: fileName,
+			Name: documentPayload.Name,
+			TaskId: data.Id,
+		}
+
+		listTaskDocument = append(listTaskDocument, document)
+	}
+
+	err = s.taskDocumentRepo.CreateDocumentsForTask(listTaskDocument)
+	if err != nil {
+		return err
+	}
+	
+	return nil
 }
 
 func (s Service) UpdateTaskStatus(taskId, statusId int) error {
