@@ -28,12 +28,15 @@ func convertListTaskToPresenter(listTask []*entity.Task, listStatus []*entity.St
 			Id: task.Id,
 			Name: task.Name,
 			Description: task.Description,
-			Category: &presenter.Category{
+		}
+
+		if (task.Category != nil) {
+			taskPresenter.Category = &presenter.Category{
 				Id: task.Category.Id,
 				Name: task.Category.Name,
 				Code: task.Category.Code,
 				Type: task.Category.Type,
-			},
+			}
 		}
 		mapStatusPresenter[task.StatusId].ListTask = append(mapStatusPresenter[task.StatusId].ListTask, taskPresenter)
 	}
