@@ -78,12 +78,13 @@ func main() {
 	taskRepo := repository.NewTaskRepository(db)
 	taskDocumentRepo := repository.NewTaskDocumentRepository(db)
 	emailRepo := repository.NewEmailRepository(db)
+	cateRepo := repository.NewCategoryRepository(db)
 
 	//Define service
 	userService := user.NewService(userRepo, roleRepo, userRoleRepo, statusRepo, emailRepo, verifier)
 	roleServce := role.NewService(roleRepo)
 	projectService := project.NewService(projectRepo, userProjectRoleRepo, roleRepo)
-	masterDataService := masterdata.NewService(statusRepo)
+	masterDataService := masterdata.NewService(statusRepo, cateRepo)
 	taskService := task.NewService(taskRepo, statusRepo, taskDocumentRepo)
 
 	//gin I18n

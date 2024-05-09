@@ -33,3 +33,24 @@ func getStatusByType(ctx *gin.Context, masterDataService masterdata.UseCase) {
 	}
 	ctx.JSON(http.StatusOK, response)
 }
+
+func getCateByType(ctx *gin.Context, masterDataService masterdata.UseCase) {
+	
+	typeCate := ctx.Query("type")
+	if typeCate == "" {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+	listCate, err := masterDataService.GetListCategoryByCode(typeCate)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, err)
+		return
+	}
+
+	response := presenter.BasicResponse{
+		Status:  fmt.Sprint(http.StatusOK),
+		Message: i18n.MustGetMessage(config.SUCCESS),
+		Results: convertListCateToPresenter(listCate),
+	}
+	ctx.JSON(http.StatusOK, response)
+}
