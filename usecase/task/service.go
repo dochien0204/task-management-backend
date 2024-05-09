@@ -100,6 +100,12 @@ func (s Service) UpdateTask(data payload.TaskUpdatePayload) error {
 		listTaskDocument = append(listTaskDocument, document)
 	}
 
+	//Delete all task of document
+	err = s.taskDocumentRepo.DeleteAllTaskDocumentOfTask(data.Id)
+	if err != nil {
+		return err
+	}
+
 	err = s.taskDocumentRepo.CreateDocumentsForTask(listTaskDocument)
 	if err != nil {
 		return err
