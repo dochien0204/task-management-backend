@@ -186,3 +186,4 @@ func (r UserRepository) IsUserEmailExists(email string) (bool, error) {
 
 	return true, nil
 }
+
