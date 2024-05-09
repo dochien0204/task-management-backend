@@ -58,3 +58,9 @@ type User struct {
 	Username string `json:"username"`
 	Name     string `json:"name"`
 }
+
+type ListTaskByDatePresenter struct {
+	Date string `json:"date"`
+	ListTask []*TaskDetail `json:"listTask"`
+	Count int `json:"count`
+}
