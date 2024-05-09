@@ -21,3 +21,20 @@ func convertListStatusToPresenter(listData []*entity.Status) []*presenter.Status
 
 	return listPresenter
 }
+
+func convertListCateToPresenter(listData []*entity.Category) []*presenter.CategoryPresenter {
+	listPresenter := []*presenter.CategoryPresenter{}
+	for _, data := range listData {
+		catePresenter := &presenter.CategoryPresenter{
+			Id: data.Id,
+			Code: data.Code,
+			Name: data.Name,
+			Type: data.Type,
+			Description: data.Description,
+		}
+
+		listPresenter = append(listPresenter, catePresenter)
+	}
+
+	return listPresenter
+}

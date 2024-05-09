@@ -13,5 +13,8 @@ func MakeHandlers(app *gin.Engine, masterDataService masterdata.UseCase, verifie
 		projectGroup.GET("/status", func(ctx *gin.Context) {
 			getStatusByType(ctx, masterDataService)
 		})
+		projectGroup.GET("/category", func(ctx *gin.Context) {
+			getCateByType(ctx, masterDataService)
+		})
 	}
 }
