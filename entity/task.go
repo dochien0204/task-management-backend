@@ -6,12 +6,12 @@ type Task struct {
 	Id int `gorm:"primaryKey"`
 	Name string
 	Description string
-	AssigneeId int
-	ReviewerId int
+	AssigneeId *int
+	ReviewerId *int
 	UserId int
 	StatusId int
 	Status *Status
-	CategoryId int
+	CategoryId *int
 	ProjectId int
 	Assignee     *User `gorm:"foreignKey:AssigneeId"`
     User         *User `gorm:"foreignKey:UserId"`
