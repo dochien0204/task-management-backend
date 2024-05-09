@@ -16,6 +16,7 @@ type User struct {
 	Password string
 	Avatar string
 	StatusId int
+	Birthday string
 	Role []*Role `gorm:"many2many:user_role;"`
 	Status   *Status
 
@@ -37,4 +38,9 @@ func (u *User) HashPassword() error {
 func (u *User) ValidatePassword(password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
 	return err == nil
+}
+
+type UserTaskCount struct {
+	User User `gorm:"embedded"`
+	TaskCount int `gorm:"column:task_count"`
 }

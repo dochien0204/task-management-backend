@@ -86,40 +86,65 @@ func (r ProjectRepository) CreateProject(data *entity.Project) error {
 	return nil
 }
 
-// func (r ProjectRepository) GetListMemberByProject(projectId int, page, size int, sortType, sortBy string) ([]*entity.User, error){
-// 	offset := util.CalculateOffset(page, size)
-// 	if sortType == "" && sortBy == "" {
-// 		sortType = "DESC"
-// 		sortBy = "created_at"
-// 	}
-// 	if sortType == "" {
-// 		sortType = "DESC"
-// 	}
+func (r ProjectRepository) GetListMemberByProject(projectId int, page, size int, sortType, sortBy string) ([]*entity.UserTaskCount, error){
+	offset := util.CalculateOffset(page, size)
+	if sortType == "" && sortBy == "" {
+		sortType = "DESC"
+		sortBy = "created_at"
+	}
+	if sortType == "" {
+		sortType = "DESC"
+	}
 
-// 	switch sortBy {
-// 	case "createdAt":
-// 		sortBy = "created_at"
+	switch sortBy {
+	case "createdAt":
+		sortBy = "created_at"
 
-// 	case "updatedAt":
-// 		sortBy = "updated_at"
+	case "updatedAt":
+		sortBy = "updated_at"
 
-// 	default:
-// 		sortBy = "created_at"
-// 	}
+	default:
+		sortBy = "created_at"
+	}
 
-// 	listUser := []*entity.User{}
-// 	err := r.db.Model(&entity.User{}).
-// 		Select("u.*,")
-// 		Joins("join user_project_role upr on upr.user_id = user.id").
-// 		Where("upr.project_id = ?", projectId).
-// 		Offset(offset).
-// 		Limit(size).
-// 		Order(fmt.Sprint("%v %v", sortBy, sortType)).
-// 		Find(&listUser).Error
+	listUser := []*entity.UserTaskCount{}
+	err := r.db.Model(&entity.User{}).
+		Select(`"user".*, COUNT(DISTINCT t.id) AS task_count`).
+		Preload("Role").
+		Preload("Status").
+		Joins(`left join user_project_role upr on upr.user_id = "user".id`).
+		Joins("left join project p on p.id = upr.project_id").
+		Joins(`left join task t on t.assignee_id = "user".id OR t.reviewer_id = "user".id`).
+		Where("upr.project_id = ?", projectId).
+		Group(`"user".id`).
+		Offset(offset).
+		Limit(size).
+		Order(fmt.Sprintf("%v %v", sortBy, sortType)).
+		Scan(&listUser).Error
 
-// 	if err != nil {
-// 		return nil, err
-// 	}
+	if err != nil {
+		return nil, err
+	}
 
-// 	return listUser, nil
-// }
+	return listUser, nil
+}
+
+func (r ProjectRepository) CountListMemberByProject(projectId int) (int, error){
+	var count int64
+	err := r.db.Model(&entity.User{}).
+		Select(`"user".*`).
+		Preload("Role").
+		Preload("Status").
+		Joins(`left join user_project_role upr on upr.user_id = "user".id`).
+		Joins("left join project p on p.id = upr.project_id").
+		Joins(`left join task t on t.assignee_id = "user".id OR t.reviewer_id = "user".id`).
+		Where("upr.project_id = ?", projectId).
+		Group(`"user".id`).
+		Count(&count).Error
+
+	if err != nil {
+		return 0, err
+	}
+
+	return int(count), nil
+}

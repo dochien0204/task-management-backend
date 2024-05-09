@@ -48,3 +48,25 @@ func convertProjectDetailToPresenter(userProject *entity.UserProjectRole) projec
 		},
 	}
 }
+
+func convertListMemberTaskCountToPresenter(listMember []*entity.UserTaskCount) []*projectPresenter.UserTaskCount {
+	listPresenter := []*projectPresenter.UserTaskCount{}
+	for _, member := range listMember {
+		userPresenter := &projectPresenter.UserTaskCount{
+			User: &projectPresenter.UserPresenter{
+				Id: member.User.Id,
+				Username: member.User.Username,
+				Name: member.User.Name,
+				PhoneNumber: member.User.PhoneNumber,
+				Email: member.User.Email,
+				Avatar: member.User.Avatar,
+			},
+			TaskCount: member.TaskCount,
+		}
+
+		listPresenter = append(listPresenter, userPresenter)
+	}
+
+	return listPresenter
+
+}
