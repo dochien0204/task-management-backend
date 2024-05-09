@@ -122,3 +122,7 @@ func (s Service) UpdateTask(data payload.TaskUpdatePayload) error {
 func (s Service) UpdateTaskStatus(taskId, statusId int) error {
 	return s.taskRepo.UpdateStatusTask(taskId, statusId)
 }
+
+func (s Service) GetListTaskByDate(projectId int, userId int, timeOffset int, fromDate time.Time, toDate time.Time) ([]*entity.Task, error) {
+	return s.taskRepo.GetListTaskByDate(projectId, userId, timeOffset, fromDate, toDate)
+}

@@ -10,6 +10,7 @@ import (
 	"source-base-go/infrastructure/repository/util"
 	"source-base-go/usecase/task"
 	"strconv"
+	"time"
 
 	"github.com/gin-contrib/i18n"
 	"github.com/gin-gonic/gin"
@@ -147,6 +148,47 @@ func updateTaskStatus(ctx *gin.Context, taskService task.UseCase) {
 	response := presenter.BasicResponse {
 		Status: fmt.Sprint(http.StatusOK),
 		Message: i18n.MustGetMessage(config.SUCCESS),
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
+
+func getListTaskByDate(ctx *gin.Context, taskService task.UseCase) {
+	from := ctx.Query("from")
+	to := ctx.Query("to")
+	timeOffset := util.GetDataFromHeader(ctx, "Time-Offset")
+	projectId := ctx.Query("projectId")
+	projectIdInt, err := strconv.Atoi(projectId)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	fromDate, _ := time.Parse(config.LAYOUT, from)
+	toDate, _ := time.Parse(config.LAYOUT, to)
+
+	token, err := util.GetToken(ctx)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	claims, err := util.ParseAccessToken(token)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	listTask, err := taskService.GetListTaskByDate(projectIdInt, claims.UserId, timeOffset, fromDate, toDate)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadGateway, entity.ErrBadRequest)
+		return
+	}
+
+	response := presenter.BasicResponse {
+		Status: fmt.Sprint(http.StatusOK),
+		Message: i18n.MustGetMessage(config.SUCCESS),
+		Results: convertListTaskByDateToPresenter(listTask),
 	}
 
 	ctx.JSON(http.StatusOK, response)

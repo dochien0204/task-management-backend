@@ -30,5 +30,8 @@ func MakeHandlers(app *gin.Engine, taskService task.UseCase, verifier util.Verif
 		taskGroup.PUT("/update-status", middleware.JWTVerifyMiddleware(verifier), tx.DBTransactionMiddleware(), func(ctx *gin.Context) {
 			updateTaskStatus(ctx, taskService)
 		})
+		taskGroup.GET("/list-task-by-date", middleware.JWTVerifyMiddleware(verifier), func(ctx *gin.Context) {
+			getListTaskByDate(ctx, taskService)
+		})
 	}
 }

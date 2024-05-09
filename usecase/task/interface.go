@@ -4,6 +4,7 @@ import (
 	payload "source-base-go/api/payload/task"
 	"source-base-go/entity"
 	"source-base-go/infrastructure/repository"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -16,6 +17,7 @@ type TaskRepository interface {
 	GetTaskDetail(taskId int) (*entity.Task, error)
 	UpdateTask(taskId int, mapData map[string]interface{}) error
 	UpdateStatusTask(taskId int, statusId int) error
+	GetListTaskByDate(projectId int, userId int, timeOffset int, fromDate time.Time, toDate time.Time) ([]*entity.Task, error)
 }
 
 type StatusRepository interface {
@@ -37,4 +39,5 @@ type UseCase interface {
 	GetTaskDetail(taskId int) (*entity.Task, error)
 	UpdateTask(payload payload.TaskUpdatePayload) error
 	UpdateTaskStatus(taskId, statusId int) error
+	GetListTaskByDate(projectId int, userId int, timeOffset int, fromDate time.Time, toDate time.Time) ([]*entity.Task, error)
 }

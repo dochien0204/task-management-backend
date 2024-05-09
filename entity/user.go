@@ -16,6 +16,7 @@ type User struct {
 	Password string
 	Avatar string
 	StatusId int
+	Role []*Role `gorm:"many2many:user_role;"`
 	Status   *Status
 
 	CreatedAt time.Time

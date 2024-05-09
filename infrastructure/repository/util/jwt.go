@@ -4,6 +4,7 @@ import (
 	"errors"
 	"source-base-go/config"
 	"source-base-go/entity"
+	"source-base-go/infrastructure/repository/define"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -57,6 +58,14 @@ func GenerateAccessToken(user *entity.User) (string, error) {
 		return "", err
 	}
 
+	var roleUser string
+	for _, role := range user.Role {
+		if role.Type == string(define.SYSTEM) {
+			roleUser = role.Code
+			break
+		} 
+	}
+
 	//Create claims
 	claims := entity.TokenClaims{
 		UserId: user.Id,
@@ -65,6 +74,7 @@ func GenerateAccessToken(user *entity.User) (string, error) {
 			ExpiresAt: time.Now().Add(time.Duration(config.GetInt("jwt.accessMaxAge"))).Unix(),
 			IssuedAt:  time.Now().Unix(),
 		},
+		Role: roleUser,
 	}
 
 	//create token

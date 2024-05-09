@@ -5,6 +5,7 @@ import (
 	"log"
 	"source-base-go/entity"
 	"source-base-go/infrastructure/repository/util"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -84,6 +85,7 @@ func (r TaskRepository) GetTaskDetail(taskId int) (*entity.Task, error) {
 	err := r.db.Model(&entity.Task{}).
 		Preload("User").
 		Preload("Assignee").
+		Preload("Reviewer").
 		Preload("Category").
 		Preload("Status").
 		Preload("Documents").
@@ -116,4 +118,36 @@ func (r TaskRepository) UpdateStatusTask(taskId int, statusId int) error {
 	}
 
 	return nil
+}
+
+
+func (r TaskRepository) GetListTaskByDate(projectId int, userId int, timeOffset int, fromDate time.Time, toDate time.Time) ([]*entity.Task, error) {
+	listTask := []*entity.Task{}
+	chain := r.db.Model(&entity.Task{}).
+		Where("project_id = ?", projectId).
+		Where("assignee_id = ?", userId)
+
+	if !fromDate.IsZero() {
+		chain = chain.Where(fmt.Sprintf(`(task.due_date) + interval '%v hour' >= ?`, timeOffset), fromDate)
+	}
+
+	if !toDate.IsZero() {
+		chain = chain.Where(fmt.Sprintf(`(task.due_date) + interval '%v hour' <= ?`, timeOffset), toDate)
+	}
+
+	err := chain.
+		Preload("User").
+		Preload("Assignee").
+		Preload("Reviewer").
+		Preload("Category").
+		Preload("Status").
+		Preload("Documents").
+		Order("created_at desc").
+		Find(&listTask).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return listTask, nil
 }
