@@ -193,3 +193,38 @@ func getListTaskByDate(ctx *gin.Context, taskService task.UseCase) {
 
 	ctx.JSON(http.StatusOK, response)
 }
+
+func createDiscussion(ctx *gin.Context, taskService task.UseCase) {
+	var payload payload.DiscussionPayload
+	err := ctx.ShouldBindJSON(&payload)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	token, err := util.GetToken(ctx)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	claims, err := util.ParseAccessToken(token)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	trxHandle := ctx.MustGet("db_trx").(*gorm.DB)
+	err = taskService.WithTrx(trxHandle).CreateDiscussionTask(claims.UserId, payload.TaskId, payload.Comment)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	response := presenter.BasicResponse {
+		Status: fmt.Sprint(http.StatusOK),
+		Message: i18n.MustGetMessage(config.SUCCESS),
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
