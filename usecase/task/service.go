@@ -19,9 +19,12 @@ type Service struct {
 	activityRepo ActivityRepository
 	userRepo UserRepository
 	projectRepo ProjectRepository
+	userProjectRoleRepo UserProjectRoleRepository
+	emailRepo EmailRepository
 }
 
-func NewService(taskRepo TaskRepository, statusRepo StatusRepository, taskDocumentRepo TaskDocumentRepository, discussionRepo DiscussionRepository, activityRepo ActivityRepository, userRepo UserRepository, projectRepo ProjectRepository) *Service {
+func NewService(taskRepo TaskRepository, statusRepo StatusRepository, taskDocumentRepo TaskDocumentRepository, discussionRepo DiscussionRepository, activityRepo ActivityRepository, userRepo UserRepository, projectRepo ProjectRepository, userProjectRoleRepo UserProjectRoleRepository,
+	emailRepo EmailRepository) *Service {
 	return &Service{
 		taskRepo: taskRepo,
 		statusRepo: statusRepo,
@@ -30,6 +33,8 @@ func NewService(taskRepo TaskRepository, statusRepo StatusRepository, taskDocume
 		activityRepo: activityRepo,
 		userRepo: userRepo,
 		projectRepo: projectRepo,
+		userProjectRoleRepo: userProjectRoleRepo,
+		emailRepo: emailRepo,
 	}
 }
 
@@ -67,12 +72,30 @@ func (s Service) CreateTask(userId int, payload taskPayload.TaskPayload) error {
 		return err
 	}
 
+	description := fmt.Sprintf("User (%v) has created a task (%v) for the project (%v)", user.Username, data.Name, project.Name)
 	activity := &entity.Activity{
 		UserId: userId,
 		TaskId: data.Id,
-		Description: fmt.Sprintf("User (%v) has created a task (%v) for the project (%v)", user.Username, data.Name, project.Name),
+		Description: description,
 	}
 
+	//Find all user in project
+	listUser, err := s.userProjectRoleRepo.FindAllUserOfProject(data.ProjectId)
+	if err != nil {
+		return err
+	}
+
+	listEmail := []string{}
+	for _, user := range listUser {
+		listEmail = append(listEmail, user.Email)
+	}
+
+	err = s.emailRepo.SendMailForUsers(description, listEmail, "TASK CREATE")
+	if err != nil {
+		return err
+	}
+
+	//Send mail
 	err = s.activityRepo.CreateActivity(activity)
 	if err != nil {
 		return err

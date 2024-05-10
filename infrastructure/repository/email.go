@@ -50,3 +50,19 @@ func (r EmailRepository) SendMailPasswordForUser(body string, to []string, subje
 
 	return nil
 }
+
+func (r EmailRepository) SendMailForUsers(body string, to []string, subject string) error {
+
+	message := []byte("To: " + to[0] + "\r\n" +
+        "Subject: " + subject + "\r\n" +
+        "\r\n" +
+        body + "\r\n")
+
+	auth := smtp.PlainAuth("", From, Password, SmtpHost)
+	err := smtp.SendMail(SmtpHost+":"+SmtpPort, auth, From, to, message)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
