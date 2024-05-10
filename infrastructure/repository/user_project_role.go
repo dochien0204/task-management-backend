@@ -72,3 +72,18 @@ func (r UserProjectRoleRepository) GetProjectDetailWithOwner(projectId, roleId i
 
 	return userProjectRole, nil
 }
+
+func (r UserProjectRoleRepository) FindAllUserOfProject(projectId int) ([]*entity.User, error) {
+	listUser := []*entity.User{}
+	err := r.db.Model(&entity.UserProjectRole{}).
+		Select("u.*").
+		Joins(`join "user" u on u.id = user_project_role.user_id`).
+		Where("user_project_role.project_id = ?", projectId).
+		Find(&listUser).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return listUser, nil
+}

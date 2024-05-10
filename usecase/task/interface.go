@@ -54,6 +54,14 @@ type ProjectRepository interface {
 	FindById(id int ) (*entity.Project, error)
 }
 
+type UserProjectRoleRepository interface {
+	FindAllUserOfProject(projectId int) ([]*entity.User, error)
+}
+
+type EmailRepository interface {
+	SendMailForUsers(body string, to []string, subject string) error
+}
+
 type UseCase interface {
 	WithTrx(trxHandle *gorm.DB) Service
 

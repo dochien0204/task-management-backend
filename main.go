@@ -87,7 +87,7 @@ func main() {
 	roleServce := role.NewService(roleRepo)
 	projectService := project.NewService(projectRepo, userProjectRoleRepo, roleRepo)
 	masterDataService := masterdata.NewService(statusRepo, cateRepo)
-	taskService := task.NewService(taskRepo, statusRepo, taskDocumentRepo, discussionRepo, activityRepo, userRepo, projectRepo)
+	taskService := task.NewService(taskRepo, statusRepo, taskDocumentRepo, discussionRepo, activityRepo, userRepo, projectRepo, userProjectRoleRepo, emailRepo)
 
 	//gin I18n
 	app.Use(ginI18n.Localize(
