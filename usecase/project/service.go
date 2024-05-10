@@ -3,6 +3,7 @@ package project
 import (
 	"source-base-go/entity"
 	"source-base-go/infrastructure/repository/define"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -11,13 +12,15 @@ type Service struct {
 	projectRepo         ProjectRepository
 	userProjectRoleRepo UserProjectRoleRepository
 	roleRepo            RoleRepository
+	activityRepo ActivityRepository
 }
 
-func NewService(projectRepo ProjectRepository, userProjectRoleRepo UserProjectRoleRepository, roleRepo RoleRepository) *Service {
+func NewService(projectRepo ProjectRepository, userProjectRoleRepo UserProjectRoleRepository, roleRepo RoleRepository, activityRepo ActivityRepository) *Service {
 	return &Service{
 		projectRepo:         projectRepo,
 		userProjectRoleRepo: userProjectRoleRepo,
 		roleRepo:            roleRepo,
+		activityRepo: activityRepo,
 	}
 }
 
@@ -135,4 +138,8 @@ func (s Service) GetListMemberByProject(projectId int, page, size int, sortType,
 	}
 
 	return listMember, count, nil
+}
+
+func (s Service) GetListActivityProjectByDate(projectId int, timeOffset int, fromDate time.Time, toDate time.Time) ([]*entity.Activity, error) {
+	return s.activityRepo.GetListActivityByDate(projectId, timeOffset, fromDate, toDate)
 }

@@ -39,3 +39,17 @@ type UserPresenter struct {
 	Avatar string `json:"avatar"`
 }
 
+type ListActivityProjectByDate struct {
+	Date string `json:"date"`
+	ListActivity []*Activity `json:"listActivity"`
+}
+
+type Activity struct {
+	Id int `json:"id"`
+	TaskId int `json:"taskId"`
+	User *UserPresenter `json:"user"`
+	Description string `json:"description"`
+	CreatedAt string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
+}
+

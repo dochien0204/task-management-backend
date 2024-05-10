@@ -62,7 +62,7 @@ type User struct {
 type ListTaskByDatePresenter struct {
 	Date string `json:"date"`
 	ListTask []*TaskDetail `json:"listTask"`
-	Count int `json:"count`
+	Count int `json:"count"`
 }
 
 type DiscussionPresenter struct {

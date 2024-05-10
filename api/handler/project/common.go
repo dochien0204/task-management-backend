@@ -68,5 +68,40 @@ func convertListMemberTaskCountToPresenter(listMember []*entity.UserTaskCount) [
 	}
 
 	return listPresenter
+}
 
+func convertListActivityProjectByDateToPresenter(listActivity []*entity.Activity) []*projectPresenter.ListActivityProjectByDate {
+	listPresenter := []*projectPresenter.ListActivityProjectByDate{}
+	mapDate := map[string][]*projectPresenter.Activity{}
+	for _, activity := range listActivity {
+		//_, isExists := mapDate[task.DueDate.Format(config.DATE_LAYOUT)]
+		activityPresenter := &projectPresenter.Activity{
+			Id: activity.Id,
+			TaskId: activity.TaskId,
+			User: &projectPresenter.UserPresenter{
+				Id: activity.User.Id,
+				Name: activity.User.Name,
+				Username: activity.User.Username,
+				PhoneNumber: activity.User.PhoneNumber,
+				Email: activity.User.Email,
+				Avatar: activity.User.Avatar,
+			},
+			Description: activity.Description,
+			CreatedAt: activity.CreatedAt.Format(config.LAYOUT),
+			UpdatedAt: activity.UpdatedAt.Format(config.LAYOUT),
+		}
+
+		mapDate[activity.CreatedAt.Format(config.DATE_LAYOUT)] = append(mapDate[activity.CreatedAt.Format(config.DATE_LAYOUT)], activityPresenter)
+	}
+
+	for k, v := range mapDate {
+		listTaskPresenterDetail := &projectPresenter.ListActivityProjectByDate{
+			Date: k,
+			ListActivity: v,
+		}
+
+		listPresenter = append(listPresenter, listTaskPresenterDetail)
+	}
+
+	return listPresenter
 }
