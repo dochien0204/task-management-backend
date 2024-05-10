@@ -16,20 +16,23 @@ type Service struct {
 	taskRepo TaskRepository
 	statusRepo StatusRepository
 	taskDocumentRepo TaskDocumentRepository
+	discussionRepo DiscussionRepository
 }
 
-func NewService(taskRepo TaskRepository, statusRepo StatusRepository, taskDocumentRepo TaskDocumentRepository) *Service {
+func NewService(taskRepo TaskRepository, statusRepo StatusRepository, taskDocumentRepo TaskDocumentRepository, discussionRepo DiscussionRepository) *Service {
 	return &Service{
 		taskRepo: taskRepo,
 		statusRepo: statusRepo,
 		taskDocumentRepo: taskDocumentRepo,
+		discussionRepo: discussionRepo,
 	}
 }
 
 func (s Service) WithTrx(trxHandle *gorm.DB) Service {
 	s.taskRepo = s.taskRepo.WithTrx(trxHandle)
 	s.taskDocumentRepo = s.taskDocumentRepo.WithTrx(trxHandle)
-
+	s.discussionRepo = s.discussionRepo.WithTrx(trxHandle)
+	
 	return s
 }
 
@@ -120,4 +123,14 @@ func (s Service) UpdateTaskStatus(taskId, statusId int) error {
 
 func (s Service) GetListTaskByDate(projectId int, userId int, timeOffset int, fromDate time.Time, toDate time.Time) ([]*entity.Task, error) {
 	return s.taskRepo.GetListTaskByDate(projectId, userId, timeOffset, fromDate, toDate)
+}
+
+func (s Service) CreateDiscussionTask(userId, taskId int, comment string) error {
+	discussion := &entity.Discussion{
+		UserId: userId,
+		TaskId: taskId,
+		Comment: comment,
+	}
+
+	return s.discussionRepo.Create(discussion)
 }

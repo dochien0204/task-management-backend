@@ -29,3 +29,8 @@ type TaskStatusUpdatePayload struct {
 	Id int `json:"id"`
 	StatusId int `json:"statusId"`
 }
+
+type DiscussionPayload struct {
+	TaskId int `json:"taskId"`
+	Comment string `json:"comment"`
+}

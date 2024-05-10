@@ -32,6 +32,12 @@ type TaskDocumentRepository interface {
 	DeleteAllTaskDocumentOfTask(taskId int) error
 }
 
+type DiscussionRepository interface {
+	WithTrx(trxHandle *gorm.DB) repository.DiscussionRepository
+
+	Create(data *entity.Discussion) error
+}
+
 type UseCase interface {
 	WithTrx(trxHandle *gorm.DB) Service
 
@@ -41,4 +47,5 @@ type UseCase interface {
 	UpdateTask(payload payload.TaskUpdatePayload) error
 	UpdateTaskStatus(taskId, statusId int) error
 	GetListTaskByDate(projectId int, userId int, timeOffset int, fromDate time.Time, toDate time.Time) ([]*entity.Task, error)
+	CreateDiscussionTask(userId, taskId int, comment string) error
 }
