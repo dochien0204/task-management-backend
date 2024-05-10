@@ -38,5 +38,9 @@ func MakeHandlers(app *gin.Engine, taskService task.UseCase, verifier util.Verif
 		taskGroup.POST("/discussion", tx.DBTransactionMiddleware(), func(ctx *gin.Context) {
 			createDiscussion(ctx, taskService)
 		})
+
+		taskGroup.GET("/discussion/list", tx.DBTransactionMiddleware(), func(ctx *gin.Context) {
+			getListDiscussionByTask(ctx, taskService)
+		})
 	}
 }
