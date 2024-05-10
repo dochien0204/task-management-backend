@@ -40,6 +40,20 @@ type DiscussionRepository interface {
 	CountListDiscussion(taskId int) (int, error)
 }
 
+type ActivityRepository interface {
+	WithTrx(trxHandle *gorm.DB) repository.ActivityRepository
+
+	CreateActivity(data *entity.Activity) error
+}
+
+type UserRepository interface {
+	FindById(id int ) (*entity.User, error)
+}
+
+type ProjectRepository interface {
+	FindById(id int ) (*entity.Project, error)
+}
+
 type UseCase interface {
 	WithTrx(trxHandle *gorm.DB) Service
 

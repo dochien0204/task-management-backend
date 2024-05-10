@@ -188,3 +188,15 @@ func (r UserRepository) IsUserEmailExists(email string) (bool, error) {
 	return true, nil
 }
 
+func (r UserRepository) FindById(id int ) (*entity.User, error) {
+	user := &entity.User{}
+	err := r.db.Model(&entity.User{}).
+		Where("id = ?", id).First(&user).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
