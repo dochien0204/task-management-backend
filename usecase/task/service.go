@@ -2,7 +2,6 @@ package task
 
 import (
 	"fmt"
-	payload "source-base-go/api/payload/task"
 	taskPayload "source-base-go/api/payload/task"
 	"source-base-go/config"
 	"source-base-go/entity"
@@ -17,14 +16,20 @@ type Service struct {
 	statusRepo StatusRepository
 	taskDocumentRepo TaskDocumentRepository
 	discussionRepo DiscussionRepository
+	activityRepo ActivityRepository
+	userRepo UserRepository
+	projectRepo ProjectRepository
 }
 
-func NewService(taskRepo TaskRepository, statusRepo StatusRepository, taskDocumentRepo TaskDocumentRepository, discussionRepo DiscussionRepository) *Service {
+func NewService(taskRepo TaskRepository, statusRepo StatusRepository, taskDocumentRepo TaskDocumentRepository, discussionRepo DiscussionRepository, activityRepo ActivityRepository, userRepo UserRepository, projectRepo ProjectRepository) *Service {
 	return &Service{
 		taskRepo: taskRepo,
 		statusRepo: statusRepo,
 		taskDocumentRepo: taskDocumentRepo,
 		discussionRepo: discussionRepo,
+		activityRepo: activityRepo,
+		userRepo: userRepo,
+		projectRepo: projectRepo,
 	}
 }
 
@@ -32,7 +37,8 @@ func (s Service) WithTrx(trxHandle *gorm.DB) Service {
 	s.taskRepo = s.taskRepo.WithTrx(trxHandle)
 	s.taskDocumentRepo = s.taskDocumentRepo.WithTrx(trxHandle)
 	s.discussionRepo = s.discussionRepo.WithTrx(trxHandle)
-	
+	s.activityRepo = s.activityRepo.WithTrx(trxHandle)
+
 	return s
 }
 
@@ -46,6 +52,28 @@ func (s Service) CreateTask(userId int, payload taskPayload.TaskPayload) error {
 	}
 
 	err := s.taskRepo.Create(data)
+	if err != nil {
+		return err
+	}
+
+	//Create activity
+	user, err := s.userRepo.FindById(userId)
+	if err != nil {
+		return err
+	}
+
+	project, err := s.projectRepo.FindById(payload.ProjectId)
+	if err != nil {
+		return err
+	}
+
+	activity := &entity.Activity{
+		UserId: userId,
+		TaskId: data.Id,
+		Description: fmt.Sprintf("User (%v) has created a task (%v) for the project (%v)", user.Username, data.Name, project.Name),
+	}
+
+	err = s.activityRepo.CreateActivity(activity)
 	if err != nil {
 		return err
 	}
@@ -71,7 +99,7 @@ func (s Service) GetTaskDetail(taskId int) (*entity.Task, error) {
 	return s.taskRepo.GetTaskDetail(taskId)
 }
 
-func (s Service) UpdateTask(data payload.TaskUpdatePayload) error {
+func (s Service) UpdateTask(data taskPayload.TaskUpdatePayload) error {
 	mapTask := map[string]interface{}{}
 	mapTask["name"] = data.Name
 	mapTask["description"] = data.Description

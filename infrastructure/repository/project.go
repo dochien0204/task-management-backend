@@ -148,3 +148,15 @@ func (r ProjectRepository) CountListMemberByProject(projectId int) (int, error){
 
 	return int(count), nil
 }
+
+func (r ProjectRepository) FindById(id int ) (*entity.Project, error) {
+	project := &entity.Project{}
+	err := r.db.Model(&entity.Project{}).
+		Where("id = ?", id).First(&project).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return project, nil
+}
