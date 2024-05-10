@@ -130,10 +130,20 @@ func (s Service) UpdateTask(data taskPayload.TaskUpdatePayload) error {
 	mapTask["reviewer_id"] = data.ReviewerId
 	mapTask["category_id"] = data.CategoryId
 	mapTask["status_id"] = data.StatusId
-	startDate, _ := time.Parse(config.LAYOUT, data.StartDate)
-	dueDate, _ := time.Parse(config.LAYOUT, data.DueDate)
-	mapTask["start_date"]= startDate
-	mapTask["due_date"] = dueDate
+
+	if data.StartDate != nil {
+		startDate, _ := time.Parse(config.LAYOUT, *data.StartDate)
+		mapTask["start_date"]= startDate
+	} else {
+		mapTask["start_date"] = data.StartDate
+	}
+	
+	if data.DueDate != nil {
+		dueDate, _ := time.Parse(config.LAYOUT, *data.DueDate)
+		mapTask["due_date"] = dueDate
+	} else {
+		mapTask["due_date"] = data.DueDate
+	}
 
 	err := s.taskRepo.UpdateTask(data.Id, mapTask)
 	if err != nil {
