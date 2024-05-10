@@ -18,8 +18,8 @@ type Task struct {
 	Reviewer *User `gorm:"foreignKey:ReviewerId"`
 	Category *Category
 	Documents []*TaskDocument `gorm:"foreignKey:TaskId"`
-	StartDate time.Time
-	DueDate time.Time
+	StartDate *time.Time
+	DueDate *time.Time
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
