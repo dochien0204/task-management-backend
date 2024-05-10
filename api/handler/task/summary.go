@@ -246,7 +246,7 @@ func getListDiscussionByTask(ctx *gin.Context, taskService task.UseCase) {
 	response := presenter.PaginationResponse {
 		Status: fmt.Sprint(http.StatusOK),
 		Message: i18n.MustGetMessage(config.SUCCESS),
-		Results: listDiscussion,
+		Results: convertListDiscussionToPresenter(listDiscussion),
 		Pagination: presenter.Pagination {
 			Count: count,
 			NumPages: int(util.CalculateTotalPages(count, pageSize)),

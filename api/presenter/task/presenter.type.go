@@ -64,3 +64,22 @@ type ListTaskByDatePresenter struct {
 	ListTask []*TaskDetail `json:"listTask"`
 	Count int `json:"count`
 }
+
+type DiscussionPresenter struct {
+	Id int `json:"id"`
+	Comment string `json:"comment"`
+	TaskId int
+	User *UserPresenter `json:"user"`
+
+	CreatedAt string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
+}
+
+type UserPresenter struct {
+	Id int `json:"id"`
+	Username string `json:"username"`
+	Name string `json:"name"`
+	PhoneNumber string `json:"phoneNumber"`
+	Email string `json:"email"`
+	Avatar string `json:"avatar"`
+}
