@@ -49,23 +49,7 @@ func convertTaskDetailEntityToPresenter(task *entity.Task) presenter.TaskDetail 
 		Id: task.Id,
 		Name: task.Name,
 		Description: task.Description,
-		Category: &presenter.Category{
-			Id: task.Category.Id,
-			Name: task.Category.Name,
-			Code: task.Category.Code,
-			Type: task.Category.Type,
-		},
 		User: &presenter.User{
-			Id: task.User.Id,
-			Username: task.User.Username,
-			Name: task.User.Name,
-		},
-		Assignee: &presenter.User{
-			Id: task.User.Id,
-			Username: task.User.Username,
-			Name: task.User.Name,
-		},
-		Reviewer: &presenter.User{
 			Id: task.User.Id,
 			Username: task.User.Username,
 			Name: task.User.Name,
@@ -76,10 +60,41 @@ func convertTaskDetailEntityToPresenter(task *entity.Task) presenter.TaskDetail 
 			Code: task.Status.Code,
 			Type: task.Status.Type,
 		},
-		StartDate: task.StartDate.Format(config.LAYOUT),
-		DueDate: task.DueDate.Format(config.LAYOUT),
 		CreatedAt: task.CreatedAt.Format(config.LAYOUT),
 		UpdatedAt: task.UpdatedAt.Format(config.LAYOUT),
+	}
+
+	if task.StartDate != nil {
+		taskPresenter.StartDate = task.StartDate.Format(config.LAYOUT)
+	}
+
+	if task.DueDate != nil {
+		taskPresenter.DueDate = task.DueDate.Format(config.LAYOUT)
+	}
+
+	if task.Assignee != nil {
+		taskPresenter.Assignee = &presenter.User{
+			Id: task.User.Id,
+			Username: task.User.Username,
+			Name: task.User.Name,
+		}
+	}
+
+	if task.Reviewer != nil {
+		taskPresenter.Reviewer = &presenter.User{
+			Id: task.User.Id,
+			Username: task.User.Username,
+			Name: task.User.Name,
+		}
+	}
+
+	if task.Category != nil {
+		taskPresenter.Category = &presenter.Category{
+			Id: task.Category.Id,
+			Name: task.Category.Name,
+			Code: task.Category.Code,
+			Type: task.Category.Type,
+		}
 	}
 
 	listDocumentPresenter := []*presenter.Document{}
