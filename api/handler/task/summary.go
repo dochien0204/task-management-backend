@@ -228,3 +228,32 @@ func createDiscussion(ctx *gin.Context, taskService task.UseCase) {
 
 	ctx.JSON(http.StatusOK, response)
 }
+
+func getListDiscussionByTask(ctx *gin.Context, taskService task.UseCase) {
+	taskId := ctx.Query("taskId")
+	taskIdConv, _ := strconv.Atoi(taskId)
+	page := util.GetPage(ctx, "page")
+	pageSize := util.GetPageSize(ctx, "size")
+	sortBy := ctx.Query("sortBy")
+	sortType := ctx.Query("sortType")
+
+	listDiscussion, count, err := taskService.GetListDiscussionOfTask(taskIdConv, page, pageSize, sortBy, sortType)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	response := presenter.PaginationResponse {
+		Status: fmt.Sprint(http.StatusOK),
+		Message: i18n.MustGetMessage(config.SUCCESS),
+		Results: listDiscussion,
+		Pagination: presenter.Pagination {
+			Count: count,
+			NumPages: int(util.CalculateTotalPages(count, pageSize)),
+			DisplayRecord: len(listDiscussion),
+			Page: page,
+		},
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}

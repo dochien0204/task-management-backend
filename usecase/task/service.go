@@ -134,3 +134,16 @@ func (s Service) CreateDiscussionTask(userId, taskId int, comment string) error 
 
 	return s.discussionRepo.Create(discussion)
 }
+
+func (s Service) GetListDiscussionOfTask(taskId int, page, size int, sortBy, sortType string) ([]*entity.Discussion, int, error) {
+	count, err := s.discussionRepo.CountListDiscussion(taskId)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	listDiscussion, err := s.discussionRepo.GetListDiscussion(taskId, page,size, sortBy, sortType)
+	if err != nil {
+		return nil, 0, err
+	}
+	return listDiscussion, count, nil
+}

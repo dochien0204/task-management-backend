@@ -36,6 +36,8 @@ type DiscussionRepository interface {
 	WithTrx(trxHandle *gorm.DB) repository.DiscussionRepository
 
 	Create(data *entity.Discussion) error
+	GetListDiscussion(taskId, page, size int, sortBy, sortType string) ([]*entity.Discussion, error)
+	CountListDiscussion(taskId int) (int, error)
 }
 
 type UseCase interface {
@@ -48,4 +50,5 @@ type UseCase interface {
 	UpdateTaskStatus(taskId, statusId int) error
 	GetListTaskByDate(projectId int, userId int, timeOffset int, fromDate time.Time, toDate time.Time) ([]*entity.Task, error)
 	CreateDiscussionTask(userId, taskId int, comment string) error
+	GetListDiscussionOfTask(taskId int, page, size int, sortBy, sortType string) ([]*entity.Discussion, int, error)
 }

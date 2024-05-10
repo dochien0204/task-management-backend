@@ -8,7 +8,7 @@ type ListTaskPresenter struct {
 type Task struct {
 	Id int `json:"id"`
 	Name string `json:"name"`
-	Description string `json:"string"`
+	Description string `json:"description"`
 	Category *Category `json:"category"`
 }
 
