@@ -10,7 +10,9 @@ import (
 	"source-base-go/infrastructure/repository/util"
 	"source-base-go/usecase/project"
 	"strconv"
+	"time"
 
+	"github.com/gin-contrib/i18n"
 	ginI18n "github.com/gin-contrib/i18n"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -176,5 +178,46 @@ func getListMemberTaskCount(ctx *gin.Context, projectService project.UseCase) {
 			Page: page,
 		},
 	}
+	ctx.JSON(http.StatusOK, response)
+}
+
+func getListActivityProjectByDate(ctx *gin.Context, projectService project.UseCase) {
+	from := ctx.Query("from")
+	to := ctx.Query("to")
+	timeOffset := util.GetDataFromHeader(ctx, "Time-Offset")
+	projectId := ctx.Query("projectId")
+	projectIdInt, err := strconv.Atoi(projectId)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	fromDate, _ := time.Parse(config.LAYOUT, from)
+	toDate, _ := time.Parse(config.LAYOUT, to)
+
+	token, err := util.GetToken(ctx)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	_, err = util.ParseAccessToken(token)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	listActivity, err := projectService.GetListActivityProjectByDate(projectIdInt, timeOffset, fromDate, toDate)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadGateway, entity.ErrBadRequest)
+		return
+	}
+
+	response := presenter.BasicResponse {
+		Status: fmt.Sprint(http.StatusOK),
+		Message: i18n.MustGetMessage(config.SUCCESS),
+		Results: convertListActivityProjectByDateToPresenter(listActivity),
+	}
+
 	ctx.JSON(http.StatusOK, response)
 }

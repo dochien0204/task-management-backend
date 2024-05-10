@@ -85,7 +85,7 @@ func main() {
 	//Define service
 	userService := user.NewService(userRepo, roleRepo, userRoleRepo, statusRepo, emailRepo, verifier)
 	roleServce := role.NewService(roleRepo)
-	projectService := project.NewService(projectRepo, userProjectRoleRepo, roleRepo)
+	projectService := project.NewService(projectRepo, userProjectRoleRepo, roleRepo, activityRepo)
 	masterDataService := masterdata.NewService(statusRepo, cateRepo)
 	taskService := task.NewService(taskRepo, statusRepo, taskDocumentRepo, discussionRepo, activityRepo, userRepo, projectRepo, userProjectRoleRepo, emailRepo)
 

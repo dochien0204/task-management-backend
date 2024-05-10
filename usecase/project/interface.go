@@ -3,6 +3,7 @@ package project
 import (
 	"source-base-go/entity"
 	"source-base-go/infrastructure/repository"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -30,6 +31,10 @@ type RoleRepository interface {
 	FindByCode(code string, typeRole string) (*entity.Role, error)
 }
 
+type ActivityRepository interface {
+	GetListActivityByDate(projectId int, timeOffset int, fromDate time.Time, toDate time.Time) ([]*entity.Activity, error)
+}
+
 type UseCase interface {
 	WithTrx(trxHandle *gorm.DB) Service
 
@@ -37,4 +42,5 @@ type UseCase interface {
 	GetListProjectOfUser(userId, page, size int, sortType, sortBy string) ([]*entity.Project, error)
 	GetProjectDetail(projectId int) (*entity.UserProjectRole, error)
 	GetListMemberByProject(projectId int, page, size int, sortType, sortBy string) ([]*entity.UserTaskCount, int, error)
+	GetListActivityProjectByDate(projectId int, timeOffset int, fromDate time.Time, toDate time.Time) ([]*entity.Activity, error)
 }
