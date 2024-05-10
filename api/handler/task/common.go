@@ -157,3 +157,29 @@ func convertListTaskByDateToPresenter(listTask []*entity.Task) []*presenter.List
 
 	return listPresenter
 }
+
+func convertListDiscussionToPresenter(listDiscussion []*entity.Discussion) []*presenter.DiscussionPresenter{
+	listPresenter := []*presenter.DiscussionPresenter{}
+	for _, dis := range listDiscussion {
+		disPresenter := &presenter.DiscussionPresenter{
+			Id: dis.Id,
+			Comment: dis.Comment,
+			TaskId: dis.TaskId,
+			User: &presenter.UserPresenter{
+				Id: dis.User.Id,
+				Username: dis.User.Username,
+				Name: dis.User.Name,
+				PhoneNumber: dis.User.PhoneNumber,
+				Email: dis.User.Email,
+				Avatar: dis.User.Avatar,
+			},
+
+			CreatedAt: dis.CreatedAt.Format(config.LAYOUT),
+			UpdatedAt: dis.UpdatedAt.Format(config.LAYOUT),
+		}
+
+		listPresenter = append(listPresenter, disPresenter)
+	}
+
+	return listPresenter
+}
