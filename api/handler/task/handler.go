@@ -42,5 +42,9 @@ func MakeHandlers(app *gin.Engine, taskService task.UseCase, verifier util.Verif
 		taskGroup.GET("/discussion/list", tx.DBTransactionMiddleware(), func(ctx *gin.Context) {
 			getListDiscussionByTask(ctx, taskService)
 		})
+
+		taskGroup.GET("/presign-link/document", func(ctx *gin.Context) {
+			getDocumentTaskUrl(ctx)
+		})
 	}
 }

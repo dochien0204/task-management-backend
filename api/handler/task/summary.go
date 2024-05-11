@@ -257,3 +257,41 @@ func getListDiscussionByTask(ctx *gin.Context, taskService task.UseCase) {
 
 	ctx.JSON(http.StatusOK, response)
 }
+
+func getDocumentTaskUrl(ctx *gin.Context) {
+	token, err := util.GetToken(ctx)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	_, err = util.ParseAccessToken(token)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	document := ctx.Query("document")
+	taskId := ctx.Query("taskId")
+	taskIdInt, err := strconv.Atoi(taskId)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	urlView, err := util.GeneratePresignViewFileURLS3(taskIdInt, document)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	response := presenter.BasicResponse{
+		Status: fmt.Sprint(http.StatusOK),
+		Message: i18n.MustGetMessage(config.SUCCESS),
+		Results: map[string]interface{}{
+			"url": urlView,
+		},
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}

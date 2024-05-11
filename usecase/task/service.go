@@ -54,6 +54,19 @@ func (s Service) CreateTask(userId int, payload taskPayload.TaskPayload) error {
 		ProjectId: payload.ProjectId,
 		UserId: userId,
 		StatusId: payload.StatusId,
+		AssigneeId: payload.AssigneeId,
+		ReviewerId: payload.ReviewerId,
+		CategoryId: payload.CategoryId,
+	}
+
+	if payload.StartDate != nil {
+		startDate, _ := time.Parse(config.LAYOUT, *payload.StartDate)
+		data.StartDate = &startDate
+	}
+
+	if payload.DueDate != nil {
+		dueDate, _ := time.Parse(config.LAYOUT, *payload.DueDate)
+		data.DueDate = &dueDate
 	}
 
 	err := s.taskRepo.Create(data)

@@ -3,8 +3,14 @@ package payload
 type TaskPayload struct {
 	Name string `json:"name"`
 	Description string `json:"description"`
-	StatusId int `json:"statusId"`
+	AssigneeId *int `json:"assigneeId"`
+	ReviewerId *int `json:"reviewerId"`
+	CategoryId *int `json:"categoryId"`
 	ProjectId int `json:"projectId"`
+	StatusId int `json:"statusId"`
+	StartDate *string `json:"startDate"`
+	DueDate *string `json:"dueDate"`
+	Documents []*TaskDocumentPayload `json:"documents"`
 }
 
 type TaskDocumentPayload struct {
