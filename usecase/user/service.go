@@ -180,3 +180,7 @@ func (s Service) UpdateAvatar(userId int, avatar string) error {
 	
 	return nil
 }
+
+func (s Service) DeleteUserById(id []int) error {
+	return s.userRepository.DeleteUserById(id)
+}

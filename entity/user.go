@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 type User struct {
@@ -22,6 +23,7 @@ type User struct {
 
 	CreatedAt time.Time
 	UpdatedAt time.Time
+	DeleteAt gorm.DeletedAt `gorm:"index;column:deleted_at"`
 }
 
 func (u *User) HashPassword() error {

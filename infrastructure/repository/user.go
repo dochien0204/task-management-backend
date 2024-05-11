@@ -200,3 +200,11 @@ func (r UserRepository) FindById(id int ) (*entity.User, error) {
 	return user, nil
 }
 
+func (r UserRepository) DeleteUserById(id []int) error {
+	err := r.db.Delete(&entity.User{}, id).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

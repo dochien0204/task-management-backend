@@ -14,6 +14,7 @@ import (
 
 	ginI18n "github.com/gin-contrib/i18n"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 // @Summary Get user's profile
@@ -162,6 +163,29 @@ func getAvatarUrl(ctx *gin.Context) {
 		Results: map[string]interface{}{
 			"url": urlView,
 		},
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
+
+func deleteUser(ctx *gin.Context, userService user.UseCase) {
+	var payload payload.DeleteUser
+	err := ctx.ShouldBindJSON(&payload)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	trxHandle := ctx.MustGet("db_trx").(*gorm.DB)
+	err = userService.WithTrx(trxHandle).DeleteUserById(payload.ListUserId)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	response := presenter.BasicResponse {
+		Status: fmt.Sprint(http.StatusOK),
+		Message: ginI18n.MustGetMessage(config.SUCCESS),
 	}
 
 	ctx.JSON(http.StatusOK, response)
