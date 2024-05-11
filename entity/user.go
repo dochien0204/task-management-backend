@@ -19,7 +19,7 @@ type User struct {
 	StatusId int
 	Birthday string
 	Role []*Role `gorm:"many2many:user_role;"`
-	Status   *Status
+	Status   *Status `gorm:"many2many:user_project_role;"`
 
 	CreatedAt time.Time
 	UpdatedAt time.Time

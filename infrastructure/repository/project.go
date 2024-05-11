@@ -160,3 +160,39 @@ func (r ProjectRepository) FindById(id int ) (*entity.Project, error) {
 
 	return project, nil
 }
+
+func (r ProjectRepository) CountListTaskOpenUser(projectId, userId, statusId int) (*entity.UserTaskCount, error) {
+	userTaskCount := &entity.UserTaskCount{}
+	err := r.db.Model(&entity.User{}).
+		Select(`"user".*, COUNT(t.id) as task_count`).
+		Joins(`join task t on t.assignee_id = "user".id`).
+		Where("t.project_id = ?", projectId).
+		Where("t.assignee_id = ?", userId).
+		Where("t.status_id != ?", statusId).
+		Group(`"user".id`).
+		Scan(&userTaskCount).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return userTaskCount, nil
+}
+
+func (r ProjectRepository) CountListTaskByStatus(projectId, userId, statusId int) (*entity.UserTaskCount, error) {
+	userTaskCount := &entity.UserTaskCount{}
+	err := r.db.Model(&entity.User{}).
+		Select(`"user".*, COUNT(t.id) as task_count`).
+		Joins(`join task t on t.assignee_id = "user".id`).
+		Where("t.project_id = ?", projectId).
+		Where("t.assignee_id = ?", userId).
+		Where("t.status_id = ?", statusId).
+		Group(`"user".id`).
+		Scan(&userTaskCount).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return userTaskCount, nil
+}

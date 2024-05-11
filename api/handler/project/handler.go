@@ -35,5 +35,9 @@ func MakeHandlers(app *gin.Engine, projectService project.UseCase, verifier util
 		projectGroup.GET("/activity/list", middleware.JWTVerifyMiddleware(verifier), func(ctx *gin.Context) {
 			getListActivityProjectByDate(ctx, projectService)
 		})
+
+		projectGroup.GET("/member/overview", middleware.JWTVerifyMiddleware(verifier), func(ctx *gin.Context) {
+			getUserOverviewTaskProject(ctx, projectService)
+		})
 	}
 }
