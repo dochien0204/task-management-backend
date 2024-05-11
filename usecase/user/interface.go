@@ -22,6 +22,7 @@ type UserRepository interface {
 	CountListUser(statusId int) (int, error)
 	IsUserEmailExists(email string) (bool, error)
 	UpdateAvatar(userId int, avatar string) error
+	DeleteUserById(id []int) error
 }
 
 type RoleRepository interface {
@@ -53,4 +54,5 @@ type UseCase interface {
 	Register(user *entity.User) error
 	GetListUser(page, size int, sortType, sortBy string) ([]*entity.User, int, error)
 	UpdateAvatar(userId int, avatar string) error
+	DeleteUserById(id []int) error
 }
