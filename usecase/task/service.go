@@ -74,6 +74,23 @@ func (s Service) CreateTask(userId int, payload taskPayload.TaskPayload) error {
 		return err
 	}
 
+	//Create task document
+	listTaskDocument := []*entity.TaskDocument{}
+	for _, documentPayload := range data.Documents {
+		document := &entity.TaskDocument{
+			File: documentPayload.File,
+			Name: documentPayload.Name,
+			TaskId: data.Id,
+		}
+
+		listTaskDocument = append(listTaskDocument, document)
+	}
+
+	err = s.taskDocumentRepo.CreateDocumentsForTask(listTaskDocument)
+	if err != nil {
+		return err
+	}
+
 	//Create activity
 	user, err := s.userRepo.FindById(userId)
 	if err != nil {
@@ -166,10 +183,8 @@ func (s Service) UpdateTask(data taskPayload.TaskUpdatePayload) error {
 	//Create task document
 	listTaskDocument := []*entity.TaskDocument{}
 	for _, documentPayload := range data.Documents {
-		path := fmt.Sprintf("task/%d/%v", data.Id, documentPayload.File)
-		fileName := fmt.Sprintf("https://%v.s3.%v.amazon.com/%v", config.S3_BUCKET_NAME, config.REGION, path)
 		document := &entity.TaskDocument{
-			File: fileName,
+			File: documentPayload.File,
 			Name: documentPayload.Name,
 			TaskId: data.Id,
 		}
