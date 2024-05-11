@@ -11,3 +11,8 @@ type ListUserIdProjectPayload struct {
 	ListUserId []int `json:"listUserId"`
 	RoleId int `json:"roleId"`
 }
+
+type UserOverViewPayload struct {
+	ProjectId int `json:"projectId"`
+	UserId int `json:"userId"`
+}

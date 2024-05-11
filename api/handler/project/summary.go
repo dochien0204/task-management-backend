@@ -221,3 +221,24 @@ func getListActivityProjectByDate(ctx *gin.Context, projectService project.UseCa
 
 	ctx.JSON(http.StatusOK, response)
 }
+
+func getUserOverviewTaskProject(ctx *gin.Context, projectService project.UseCase) {
+	projectId := ctx.Query("projectId")
+	UserId := ctx.Query("userId")
+	projectIdInt, _ := strconv.Atoi(projectId)
+	userIdInt, _ := strconv.Atoi(UserId)
+
+	userOpenTaskCount, userClosedTaskCount, userProjectRole, err := projectService.GetOverviewUserTaskProject(projectIdInt, userIdInt)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	response := presenter.BasicResponse {
+		Status: fmt.Sprint(http.StatusOK),
+		Message: i18n.MustGetMessage(config.SUCCESS),
+		Results: convertUserProjectOverviewToPresenter(userOpenTaskCount, userClosedTaskCount, userProjectRole),
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}

@@ -37,6 +37,7 @@ type UserPresenter struct {
 	PhoneNumber string `json:"phoneNumber"`
 	Email string `json:"email"`
 	Avatar string `json:"avatar"`
+	Role *Role `json:"category"`
 }
 
 type ListActivityProjectByDate struct {
@@ -53,3 +54,15 @@ type Activity struct {
 	UpdatedAt string `json:"updatedAt"`
 }
 
+type UserProjectOverview struct {
+	User *UserPresenter `json:"user"`
+	TaskOpenCount int `json:"taskOpenCount"`
+	TaskCloseCount int `json:"taskClosedCount"`
+}
+
+type Role struct {
+	Id int `json:"id"`
+	Code string `json:"code"`
+	Name string `json:"name"`
+	Type string `json:"type"`
+}

@@ -6,4 +6,5 @@ type UserProjectRole struct {
 	RoleId    int
 	Project   *Project
 	User      *User
+	Role *Role
 }

@@ -2,6 +2,7 @@ package handler
 
 import (
 	projectPayload "source-base-go/api/payload/project"
+	presenter "source-base-go/api/presenter/project"
 	projectPresenter "source-base-go/api/presenter/project"
 	"source-base-go/config"
 	"source-base-go/entity"
@@ -104,4 +105,27 @@ func convertListActivityProjectByDateToPresenter(listActivity []*entity.Activity
 	}
 
 	return listPresenter
+}
+
+func convertUserProjectOverviewToPresenter(userOpenTask *entity.UserTaskCount, userClosedTask *entity.UserTaskCount, userProjectRole *entity.UserProjectRole) *presenter.UserProjectOverview {
+	presenter := &projectPresenter.UserProjectOverview{
+		User: &projectPresenter.UserPresenter{
+			Id: userOpenTask.User.Id,
+			Name: userOpenTask.User.Name,
+			Username: userOpenTask.User.Username,
+			PhoneNumber: userOpenTask.User.PhoneNumber,
+			Email: userOpenTask.User.Email,
+			Avatar: userOpenTask.User.Avatar,
+			Role: &projectPresenter.Role {
+				Id: userProjectRole.Role.Id,
+				Name: userProjectRole.Role.Name,
+				Type: userProjectRole.Role.Type,
+				Code: userProjectRole.Role.Code,
+			},
+		},
+		TaskOpenCount: userOpenTask.TaskCount,
+		TaskCloseCount: userClosedTask.TaskCount,
+	}
+
+	return presenter
 }

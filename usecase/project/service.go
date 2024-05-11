@@ -13,14 +13,16 @@ type Service struct {
 	userProjectRoleRepo UserProjectRoleRepository
 	roleRepo            RoleRepository
 	activityRepo ActivityRepository
+	statusRepo StatusRepository
 }
 
-func NewService(projectRepo ProjectRepository, userProjectRoleRepo UserProjectRoleRepository, roleRepo RoleRepository, activityRepo ActivityRepository) *Service {
+func NewService(projectRepo ProjectRepository, userProjectRoleRepo UserProjectRoleRepository, roleRepo RoleRepository, activityRepo ActivityRepository, statusRepo StatusRepository) *Service {
 	return &Service{
 		projectRepo:         projectRepo,
 		userProjectRoleRepo: userProjectRoleRepo,
 		roleRepo:            roleRepo,
 		activityRepo: activityRepo,
+		statusRepo: statusRepo,
 	}
 }
 
@@ -142,4 +144,31 @@ func (s Service) GetListMemberByProject(projectId int, page, size int, sortType,
 
 func (s Service) GetListActivityProjectByDate(projectId int, timeOffset int, fromDate time.Time, toDate time.Time) ([]*entity.Activity, error) {
 	return s.activityRepo.GetListActivityByDate(projectId, timeOffset, fromDate, toDate)
+}
+
+func (s Service) GetOverviewUserTaskProject(projectId, userId int) (*entity.UserTaskCount, *entity.UserTaskCount, *entity.UserProjectRole, error) {
+	//Get status closed task
+	statusClosedTask, err := s.statusRepo.GetStatusByCodeAndType(define.TASK_CODE, define.TASK_CLOSED_STATUS)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	//Get role user in project
+	userProjectRole, err := s.userProjectRoleRepo.GetRoleUserInProject(projectId, userId)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	//Get task not in closed status
+	listTaskNotClosed, err := s.projectRepo.CountListTaskOpenUser(projectId, userId, statusClosedTask.Id)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	listTaskClosed, err := s.projectRepo.CountListTaskByStatus(projectId, userId, statusClosedTask.Id)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	return listTaskNotClosed, listTaskClosed, userProjectRole, nil
 }
