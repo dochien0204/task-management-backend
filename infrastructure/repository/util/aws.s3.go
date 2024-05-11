@@ -83,3 +83,27 @@ func GeneratePresignViewAvatarURLS3(userId int, avatar string) (string, error) {
 
 	return presignResult.URL, nil
 }
+
+func GeneratePresignViewFileURLS3(taskId int, document string) (string, error) {
+
+	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("ap-northeast-1"))
+	if err != nil {
+		return "", err
+	}
+	keyName := fmt.Sprintf("task/%d/%s", taskId, document)
+
+	client := s3.NewFromConfig(cfg)
+
+	presignClient := s3.NewPresignClient(client)
+
+	presignResult, err := presignClient.PresignGetObject(context.TODO(), &s3.GetObjectInput{
+		Bucket: aws.String(otherConfig.S3_BUCKET_NAME),
+		Key:    aws.String(keyName),
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	return presignResult.URL, nil
+}
