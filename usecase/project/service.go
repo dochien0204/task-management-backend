@@ -172,3 +172,7 @@ func (s Service) GetOverviewUserTaskProject(projectId, userId int) (*entity.User
 
 	return listTaskNotClosed, listTaskClosed, userProjectRole, nil
 }
+
+func (s Service) GetListActivityByDateOfUser(projectId, userId int, timeOffset int, fromDate time.Time, toDate time.Time) ([]*entity.Activity, error) {
+	return s.activityRepo.GetListActivityByDateOfUser(projectId, userId, timeOffset, fromDate, toDate)
+} 
