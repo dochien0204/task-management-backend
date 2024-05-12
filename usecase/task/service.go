@@ -75,20 +75,22 @@ func (s Service) CreateTask(userId int, payload taskPayload.TaskPayload) error {
 	}
 
 	//Create task document
-	listTaskDocument := []*entity.TaskDocument{}
-	for _, documentPayload := range payload.Documents {
-		document := &entity.TaskDocument{
-			File: documentPayload.File,
-			Name: documentPayload.Name,
-			TaskId: data.Id,
+	if payload.Documents != nil {
+		listTaskDocument := []*entity.TaskDocument{}
+		for _, documentPayload := range payload.Documents {
+			document := &entity.TaskDocument{
+				File: documentPayload.File,
+				Name: documentPayload.Name,
+				TaskId: data.Id,
+			}
+	
+			listTaskDocument = append(listTaskDocument, document)
 		}
-
-		listTaskDocument = append(listTaskDocument, document)
-	}
-
-	err = s.taskDocumentRepo.CreateDocumentsForTask(listTaskDocument)
-	if err != nil {
-		return err
+	
+		err = s.taskDocumentRepo.CreateDocumentsForTask(listTaskDocument)
+		if err != nil {
+			return err
+		}
 	}
 
 	//Create activity
