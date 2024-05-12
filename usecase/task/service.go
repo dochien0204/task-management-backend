@@ -238,3 +238,16 @@ func (s Service) GetListDiscussionOfTask(taskId int, page, size int, sortBy, sor
 	}
 	return listDiscussion, count, nil
 }
+
+func (s Service) GetListTaskProjectByUserAndStatus(projectId int, assigneeId, statusId int, page, size int, sortType, sortBy string) ([]*entity.Task, int, error) {
+	listTask, err := s.taskRepo.GetListTaskProjectByUserAndStatus(projectId, assigneeId, statusId, page, size, sortType, sortBy)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	count, err := s.taskRepo.CountListTaskProjectByUserAndStatus(projectId, assigneeId, statusId)
+	if err != nil {
+		return nil, 0, err
+	}
+	return listTask, count, nil
+}

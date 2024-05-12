@@ -46,5 +46,10 @@ func MakeHandlers(app *gin.Engine, taskService task.UseCase, verifier util.Verif
 		taskGroup.GET("/presign-link/document", func(ctx *gin.Context) {
 			getDocumentTaskUrl(ctx)
 		})
+
+		taskGroup.GET("/list/user-status", func(ctx *gin.Context) {
+			getListTaskProjectByUserAndStatus(ctx, taskService)
+		})
+
 	}
 }
