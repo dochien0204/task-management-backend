@@ -65,3 +65,30 @@ func (r ActivityRepository) GetListActivityByDate(projectId int, timeOffset int,
 
 	return listActivity, nil
 }
+
+func (r ActivityRepository) GetListActivityByDateOfUser(projectId, userId int, timeOffset int, fromDate time.Time, toDate time.Time) ([]*entity.Activity, error) {
+	listActivity := []*entity.Activity{}
+	chain := r.db.Model(&entity.Activity{}).
+		Joins("join task t on t.id = activity.task_id").
+		Where("t.project_id = ?", projectId).
+		Where("activity.user_id = ?", userId)
+
+	if !fromDate.IsZero() {
+		chain = chain.Where(fmt.Sprintf(`(activity.created_at) + interval '%v hour' >= ?`, timeOffset), fromDate)
+	}
+
+	if !toDate.IsZero() {
+		chain = chain.Where(fmt.Sprintf(`(activity.created_at) + interval '%v hour' <= ?`, timeOffset), toDate)
+	}
+
+	err := chain.
+		Preload("User").
+		Order("created_at desc").
+		Find(&listActivity).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return listActivity, nil
+}

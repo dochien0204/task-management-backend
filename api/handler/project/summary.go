@@ -242,3 +242,46 @@ func getUserOverviewTaskProject(ctx *gin.Context, projectService project.UseCase
 
 	ctx.JSON(http.StatusOK, response)
 }
+
+func getListActivityProjectByUser(ctx *gin.Context, projectService project.UseCase) {
+	from := ctx.Query("from")
+	to := ctx.Query("to")
+	timeOffset := util.GetDataFromHeader(ctx, "Time-Offset")
+	projectId := ctx.Query("projectId")
+	projectIdInt, err := strconv.Atoi(projectId)
+	userId := ctx.Query("userId")
+	userIdInt, _ := strconv.Atoi(userId)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	fromDate, _ := time.Parse(config.LAYOUT, from)
+	toDate, _ := time.Parse(config.LAYOUT, to)
+
+	token, err := util.GetToken(ctx)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	_, err = util.ParseAccessToken(token)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	listActivity, err := projectService.GetListActivityByDateOfUser(projectIdInt, userIdInt, timeOffset, fromDate, toDate)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadGateway, entity.ErrBadRequest)
+		return
+	}
+
+	response := presenter.BasicResponse {
+		Status: fmt.Sprint(http.StatusOK),
+		Message: i18n.MustGetMessage(config.SUCCESS),
+		Results: convertListActivityProjectByDateToPresenter(listActivity),
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
