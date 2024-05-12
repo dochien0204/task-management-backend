@@ -76,7 +76,7 @@ func (s Service) CreateTask(userId int, payload taskPayload.TaskPayload) error {
 
 	//Create task document
 	listTaskDocument := []*entity.TaskDocument{}
-	for _, documentPayload := range data.Documents {
+	for _, documentPayload := range payload.Documents {
 		document := &entity.TaskDocument{
 			File: documentPayload.File,
 			Name: documentPayload.Name,
