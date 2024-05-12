@@ -295,3 +295,48 @@ func getDocumentTaskUrl(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, response)
 }
+
+func getListTaskProjectByUserAndStatus(ctx *gin.Context, taskService task.UseCase) {
+	projectId := ctx.Query("projectId")
+	projectIdConv, _ := strconv.Atoi(projectId)
+	statusId := ctx.Query("statusId")
+	statusIdConv, _ := strconv.Atoi(statusId)
+	userId := ctx.Query("userId")
+	userIdConv, _ := strconv.Atoi(userId)
+	page := util.GetPage(ctx, "page")
+	pageSize := util.GetPageSize(ctx, "size")
+	sortBy := ctx.Query("sortBy")
+	sortType := ctx.Query("sortType")
+
+	//Get URL param
+	token, err := util.GetToken(ctx)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	_, err = util.ParseAccessToken(token)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	listTask, count, err := taskService.GetListTaskProjectByUserAndStatus(projectIdConv, userIdConv, statusIdConv, page, pageSize, sortType, sortBy)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, err)
+		return
+	}
+
+	response := presenter.PaginationResponse{
+		Status:  fmt.Sprint(http.StatusOK),
+		Message: i18n.MustGetMessage(config.SUCCESS),
+		Results: convertListTaskProjectByUserAndStatusToPresenter(listTask),
+		Pagination: presenter.Pagination {
+			Count: count,
+			NumPages: int(util.CalculateTotalPages(count, pageSize)),
+			DisplayRecord: len(listTask),
+			Page: page,
+		},
+	}
+	ctx.JSON(http.StatusOK, response)
+}

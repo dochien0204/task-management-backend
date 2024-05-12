@@ -18,6 +18,8 @@ type TaskRepository interface {
 	UpdateTask(taskId int, mapData map[string]interface{}) error
 	UpdateStatusTask(taskId int, statusId int) error
 	GetListTaskByDate(projectId int, userId int, timeOffset int, fromDate time.Time, toDate time.Time) ([]*entity.Task, error)
+	GetListTaskProjectByUserAndStatus(projectId int, assigneeId, statusId int, page, size int, sortType, sortBy string) ([]*entity.Task, error)
+	CountListTaskProjectByUserAndStatus(projectId int, assigneeId, statusId int) (int, error)
 }
 
 type StatusRepository interface {
@@ -73,4 +75,5 @@ type UseCase interface {
 	GetListTaskByDate(projectId int, userId int, timeOffset int, fromDate time.Time, toDate time.Time) ([]*entity.Task, error)
 	CreateDiscussionTask(userId, taskId int, comment string) error
 	GetListDiscussionOfTask(taskId int, page, size int, sortBy, sortType string) ([]*entity.Discussion, int, error)
+	GetListTaskProjectByUserAndStatus(projectId int, assigneeId, statusId int, page, size int, sortType, sortBy string) ([]*entity.Task, int, error)
 }

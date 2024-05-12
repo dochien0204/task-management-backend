@@ -198,3 +198,50 @@ func convertListDiscussionToPresenter(listDiscussion []*entity.Discussion) []*pr
 
 	return listPresenter
 }
+
+func convertListTaskProjectByUserAndStatusToPresenter(listTask []*entity.Task) []*presenter.TaskDetail {
+	listPresenter := []*presenter.TaskDetail{}
+	for _, task := range listTask {
+		//_, isExists := mapDate[task.DueDate.Format(config.DATE_LAYOUT)]
+		taskPresenter := &presenter.TaskDetail{
+			Id: task.Id,
+		Name: task.Name,
+		Description: task.Description,
+		Category: &presenter.Category{
+			Id: task.Category.Id,
+			Name: task.Category.Name,
+			Code: task.Category.Code,
+			Type: task.Category.Type,
+		},
+		User: &presenter.User{
+			Id: task.User.Id,
+			Username: task.User.Username,
+			Name: task.User.Name,
+		},
+		Assignee: &presenter.User{
+			Id: task.User.Id,
+			Username: task.User.Username,
+			Name: task.User.Name,
+		},
+		Reviewer: &presenter.User{
+			Id: task.User.Id,
+			Username: task.User.Username,
+			Name: task.User.Name,
+		},
+		Status: &presenter.Status{
+			Id: task.Status.Id,
+			Name: task.Status.Name,
+			Code: task.Status.Code,
+			Type: task.Status.Type,
+		},
+		StartDate: task.StartDate.Format(config.LAYOUT),
+		DueDate: task.DueDate.Format(config.LAYOUT),
+		CreatedAt: task.CreatedAt.Format(config.LAYOUT),
+		UpdatedAt: task.UpdatedAt.Format(config.LAYOUT),
+		}
+
+		listPresenter = append(listPresenter, taskPresenter)
+	}
+
+	return listPresenter
+}

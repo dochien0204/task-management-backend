@@ -83,3 +83,7 @@ type UserPresenter struct {
 	Email string `json:"email"`
 	Avatar string `json:"avatar"`
 }
+
+type ListTaskByUserAndStatusPresenter struct {
+	ListTask []*TaskDetail `json:"listTask"`
+}
