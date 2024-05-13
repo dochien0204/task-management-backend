@@ -285,3 +285,26 @@ func getListActivityProjectByUser(ctx *gin.Context, projectService project.UseCa
 
 	ctx.JSON(http.StatusOK, response)
 }
+
+func updateProject(ctx *gin.Context, projectService project.UseCase) {
+	var payload projectPayload.ProjectUpdatePayload
+	err := ctx.ShouldBindJSON(&payload)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	trxHandle := ctx.MustGet("db_trx").(*gorm.DB)
+	err = projectService.WithTrx(trxHandle).UpdateProject(payload)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	response := presenter.BasicResponse {
+		Status: fmt.Sprint(http.StatusOK),
+		Message: i18n.MustGetMessage(config.SUCCESS),
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}

@@ -1,6 +1,7 @@
 package project
 
 import (
+	payload "source-base-go/api/payload/project"
 	"source-base-go/entity"
 	"source-base-go/infrastructure/repository/define"
 	"time"
@@ -48,7 +49,7 @@ func (s Service) CreateProject(userId int, project *entity.Project) error {
 	if err != nil {
 		return err
 	}
-	
+
 	project.StatusId = statusActive.Id
 	//Create project
 	err = s.projectRepo.CreateProject(project)
@@ -182,3 +183,33 @@ func (s Service) GetOverviewUserTaskProject(projectId, userId int) (*entity.User
 func (s Service) GetListActivityByDateOfUser(projectId, userId int, timeOffset int, fromDate time.Time, toDate time.Time) ([]*entity.Activity, error) {
 	return s.activityRepo.GetListActivityByDateOfUser(projectId, userId, timeOffset, fromDate, toDate)
 } 
+
+func (s Service) UpdateProject(payload payload.ProjectUpdatePayload) error {
+	projectUpdate, err := s.projectRepo.FindById(payload.Id)
+	if err != nil {
+		return err
+	}
+
+	if payload.Name != projectUpdate.Name {
+		projectCreate, err := s.projectRepo.FindProjectByName(payload.Name)
+		if err != nil {
+			return err
+		}
+
+		if projectCreate.Name != "" {
+			return entity.ErrProjectAlreadyExists
+		}
+	}
+
+	mapData := map[string]interface{}{}
+	mapData["name"] = payload.Name
+	mapData["description"] = payload.Description
+	mapData["status_id"] = payload.StatusId
+
+	err = s.projectRepo.UpdateProject(payload.Id, mapData)
+	if err != nil {
+		return err
+	}
+	
+	return nil
+}

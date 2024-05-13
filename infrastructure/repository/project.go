@@ -152,6 +152,7 @@ func (r ProjectRepository) CountListMemberByProject(projectId int) (int, error){
 func (r ProjectRepository) FindById(id int ) (*entity.Project, error) {
 	project := &entity.Project{}
 	err := r.db.Model(&entity.Project{}).
+		Preload("Status").
 		Where("id = ?", id).First(&project).Error
 
 	if err != nil {
@@ -195,4 +196,16 @@ func (r ProjectRepository) CountListTaskByStatus(projectId, userId, statusId int
 	}
 
 	return userTaskCount, nil
+}
+
+func (r ProjectRepository) UpdateProject(projectId int, mapData map[string]interface{}) error {
+	err := r.db.Model(&entity.Project{}).
+		Where("id = ?", projectId).
+		Updates(mapData).Error
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
