@@ -1,6 +1,7 @@
 package project
 
 import (
+	payload "source-base-go/api/payload/project"
 	"source-base-go/entity"
 	"source-base-go/infrastructure/repository"
 	"time"
@@ -18,6 +19,8 @@ type ProjectRepository interface {
 	CountListMemberByProject(projectId int) (int, error)
 	CountListTaskOpenUser(projectId, userId, statusId int) (*entity.UserTaskCount, error)
 	CountListTaskByStatus(projectId, userId, statusId int) (*entity.UserTaskCount, error)
+	UpdateProject(projectId int, mapData map[string]interface{}) error
+	FindById(id int ) (*entity.Project, error)
 }
 
 type UserProjectRoleRepository interface {
@@ -53,4 +56,5 @@ type UseCase interface {
 	GetListActivityProjectByDate(projectId int, timeOffset int, fromDate time.Time, toDate time.Time) ([]*entity.Activity, error)
 	GetOverviewUserTaskProject(projectId, userId int) (*entity.UserTaskCount, *entity.UserTaskCount, *entity.UserProjectRole, error)
 	GetListActivityByDateOfUser(projectId, userId int, timeOffset int, fromDate time.Time, toDate time.Time) ([]*entity.Activity, error)
+	UpdateProject(payload payload.ProjectUpdatePayload) error
 }

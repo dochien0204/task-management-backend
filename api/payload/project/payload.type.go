@@ -16,3 +16,10 @@ type UserOverViewPayload struct {
 	ProjectId int `json:"projectId"`
 	UserId int `json:"userId"`
 }
+
+type ProjectUpdatePayload struct {
+	Id int `json:"id"`
+	Description string `json:"description"`
+	Name string `json:"name"`
+	StatusId int `json:"statusId"`
+}
