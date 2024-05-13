@@ -14,13 +14,15 @@ type ProjectRepository interface {
 
 	FindProjectByName(name string) (*entity.Project, error)
 	CreateProject(data *entity.Project) error
-	GetListProjectOfUser(userId, page, size int, sortType, sortBy string) ([]*entity.Project, error)
+	GetListProjectOfUser(userId, statusId, page, size int, sortType, sortBy string) ([]*entity.Project, error)
 	GetListMemberByProject(projectId int, page, size int, sortType, sortBy string) ([]*entity.UserTaskCount, error)
 	CountListMemberByProject(projectId int) (int, error)
 	CountListTaskOpenUser(projectId, userId, statusId int) (*entity.UserTaskCount, error)
 	CountListTaskByStatus(projectId, userId, statusId int) (*entity.UserTaskCount, error)
 	UpdateProject(projectId int, mapData map[string]interface{}) error
 	FindById(id int ) (*entity.Project, error)
+	GetAllProject(userId, page, size int, sortType, sortBy string) ([]*entity.Project, error)
+	CountAllProject(userId int) (int, error)
 }
 
 type UserProjectRoleRepository interface {
@@ -57,4 +59,5 @@ type UseCase interface {
 	GetOverviewUserTaskProject(projectId, userId int) (*entity.UserTaskCount, *entity.UserTaskCount, *entity.UserProjectRole, error)
 	GetListActivityByDateOfUser(projectId, userId int, timeOffset int, fromDate time.Time, toDate time.Time) ([]*entity.Activity, error)
 	UpdateProject(payload payload.ProjectUpdatePayload) error
+	GetAllProject(userId, page, size int, sortType, sortBy string) ([]*entity.Project, int, error)
 }

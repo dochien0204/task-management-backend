@@ -41,7 +41,7 @@ func (r ProjectRepository) FindProjectByName(name string) (*entity.Project, erro
 	return project, nil
 }
 
-func (r ProjectRepository) GetListProjectOfUser(userId, page, size int, sortType, sortBy string) ([]*entity.Project, error) {
+func (r ProjectRepository) GetListProjectOfUser(userId, statusId, page, size int, sortType, sortBy string) ([]*entity.Project, error) {
 	offset := util.CalculateOffset(page, size)
 	if sortType == "" && sortBy == "" {
 		sortType = "DESC"
@@ -65,7 +65,8 @@ func (r ProjectRepository) GetListProjectOfUser(userId, page, size int, sortType
 	err := r.db.Model(&entity.Project{}).
 		Select("project.id", "project.name", "project.description", "project.image", "project.created_at", "project.updated_at").
 		Joins("join user_project_role upr on upr.project_id = project.id").
-		Where("user_id = ?", userId).
+		Where("project.user_id = ?", userId).
+		Where("project.status_id = ?", statusId).
 		Offset(offset).
 		Limit(size).
 		Order(fmt.Sprintf("%v %v", sortBy, sortType)).
@@ -208,4 +209,53 @@ func (r ProjectRepository) UpdateProject(projectId int, mapData map[string]inter
 	}
 
 	return nil
+}
+
+func (r ProjectRepository) GetAllProject(userId, page, size int, sortType, sortBy string) ([]*entity.Project, error) {
+	offset := util.CalculateOffset(page, size)
+	if sortType == "" && sortBy == "" {
+		sortType = "DESC"
+		sortBy = "project.created_at"
+	}
+	if sortType == "" {
+		sortType = "DESC"
+	}
+
+	switch sortBy {
+	case "createdAt":
+		sortBy = "project.created_at"
+
+	case "updatedAt":
+		sortBy = "project.updated_at"
+
+	default:
+		sortBy = "project.created_at"
+	}
+	listProject := []*entity.Project{}
+	err := r.db.Model(&entity.Project{}).
+		Preload("User").
+		Preload("Status").
+		Where("user_id = ?", userId).
+		Joins("join user_project_role upr on upr.project_id = project.id").
+		Offset(offset).
+		Limit(size).
+		Order(fmt.Sprintf("%v %v", sortBy, sortType)).
+		Find(&listProject).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return listProject, nil
+}
+
+func (r ProjectRepository) CountAllProject(userId int) (int, error) {
+	var count int64
+	err := r.db.Model(&entity.Project{}).
+		Where("user_id = ?", userId).
+		Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+
+	return int(count), nil
 }
