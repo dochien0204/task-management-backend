@@ -111,21 +111,21 @@ func (s Service) CreateTask(userId int, payload taskPayload.TaskPayload) (int, e
 		Description: description,
 	}
 
-	//Find all user in project
-	listUser, err := s.userProjectRoleRepo.FindAllUserOfProject(data.ProjectId)
-	if err != nil {
-		return 0, err
-	}
+	// //Find all user in project
+	// listUser, err := s.userProjectRoleRepo.FindAllUserOfProject(data.ProjectId)
+	// if err != nil {
+	// 	return 0, err
+	// }
 
-	listEmail := []string{}
-	for _, user := range listUser {
-		listEmail = append(listEmail, user.Email)
-	}
+	// listEmail := []string{}
+	// for _, user := range listUser {
+	// 	listEmail = append(listEmail, user.Email)
+	// }
 
-	err = s.emailRepo.SendMailForUsers(description, listEmail, "TASK CREATE")
-	if err != nil {
-		return 0, err
-	}
+	// err = s.emailRepo.SendMailForUsers(description, listEmail, "TASK CREATE")
+	// if err != nil {
+	// 	return 0, err
+	// }
 
 	//Send mail
 	err = s.activityRepo.CreateActivity(activity)
