@@ -155,13 +155,14 @@ func getListMemberTaskCount(ctx *gin.Context, projectService project.UseCase) {
 	sortBy := ctx.Query("sortBy")
 	sortType := ctx.Query("sortType")
 	projectId := ctx.Query("projectId")
+	keyword := ctx.Query("keyword")
 	projectIdInt, err := strconv.Atoi(projectId)
 	if err != nil {
 		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
 		return
 	}
 
-	listTask, count, err := projectService.GetListMemberByProject(projectIdInt, page, pageSize, sortType, sortBy)
+	listTask, count, err := projectService.GetListMemberByProject(projectIdInt, page, pageSize, keyword, sortType, sortBy)
 	if err != nil {
 		util.HandleException(ctx, http.StatusBadRequest, err)
 		return
