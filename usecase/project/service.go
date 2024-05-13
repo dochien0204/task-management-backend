@@ -139,8 +139,8 @@ func (s Service) GetProjectDetail(projectId int) (*entity.UserProjectRole, error
 	return projectDetail, nil
 }
 
-func (s Service) GetListMemberByProject(projectId int, page, size int, sortType, sortBy string) ([]*entity.UserTaskCount, int, error) {
-	listMember, err := s.projectRepo.GetListMemberByProject(projectId, page, size, sortType, sortBy)
+func (s Service) GetListMemberByProject(projectId int, page, size int, keyword, sortType, sortBy string) ([]*entity.UserTaskCount, int, error) {
+	listMember, err := s.projectRepo.GetListMemberByProject(projectId, page, size, keyword, sortType, sortBy)
 	if err != nil {
 		return nil, 0, err
 	}

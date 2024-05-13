@@ -88,7 +88,7 @@ func (r ProjectRepository) CreateProject(data *entity.Project) error {
 	return nil
 }
 
-func (r ProjectRepository) GetListMemberByProject(projectId int, page, size int, sortType, sortBy string) ([]*entity.UserTaskCount, error){
+func (r ProjectRepository) GetListMemberByProject(projectId int, page, size int, keyword, sortType, sortBy string) ([]*entity.UserTaskCount, error){
 	offset := util.CalculateOffset(page, size)
 	if sortType == "" && sortBy == "" {
 		sortType = "DESC"
@@ -110,15 +110,21 @@ func (r ProjectRepository) GetListMemberByProject(projectId int, page, size int,
 	}
 
 	listUser := []*entity.UserTaskCount{}
-	err := r.db.Model(&entity.User{}).
+	chain := r.db.Model(&entity.User{}).
 		Select(`"user".*, COUNT(DISTINCT t.id) AS task_count`).
 		Preload("Role").
 		Preload("Status").
 		Joins(`left join user_project_role upr on upr.user_id = "user".id`).
 		Joins("left join project p on p.id = upr.project_id").
 		Joins(`left join task t on t.assignee_id = "user".id OR t.reviewer_id = "user".id`).
-		Where("upr.project_id = ?", projectId).
-		Group(`"user".id`).
+		Where("upr.project_id = ?", projectId)
+		
+	if keyword != "" {
+		chain = chain.Where(`"user".username LIKE ?`, "%"+keyword+"%").
+			Or(`"user".name LIKE ?`, "%"+keyword+"%")
+	}
+	
+	err := chain.Group(`"user".id`).
 		Offset(offset).
 		Limit(size).
 		Order(fmt.Sprintf("%v %v", sortBy, sortType)).
