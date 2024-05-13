@@ -80,7 +80,11 @@ func (s Service) CreateProject(userId int, project *entity.Project) error {
 }
 
 func (s Service) GetListProjectOfUser(userId, page, size int, sortType, sortBy string) ([]*entity.Project, error) {
-	return s.projectRepo.GetListProjectOfUser(userId, page, size, sortType, sortBy)
+	statusProjectActive, err := s.statusRepo.GetStatusByCodeAndType(define.PROJECT_CODE, define.PROJECT_ACTIVE_CODE)
+	if err != nil {
+		return nil, err
+	}
+	return s.projectRepo.GetListProjectOfUser(userId, statusProjectActive.Id, page, size, sortType, sortBy)
 }
 
 func (s Service) AddListMemberToProject(userId, projectId, roleId int, listUserId []int) error {
@@ -210,6 +214,20 @@ func (s Service) UpdateProject(payload payload.ProjectUpdatePayload) error {
 	if err != nil {
 		return err
 	}
-	
+
 	return nil
 }
+
+func (s Service) GetAllProject(userId, page, size int, sortType, sortBy string) ([]*entity.Project, int, error) {
+	count, err := s.projectRepo.CountAllProject(userId)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	listProject, err := s.projectRepo.GetAllProject(userId, page, size, sortType, sortBy)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return listProject, count, nil
+} 	
