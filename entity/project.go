@@ -7,6 +7,8 @@ type Project struct {
 	Name        string
 	Description string
 	Image       string
+	StatusId int
+	Status *Status
 
 	CreatedAt time.Time
 	UpdatedAt time.Time
