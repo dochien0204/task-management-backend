@@ -63,6 +63,7 @@ func (r ProjectRepository) GetListProjectOfUser(userId, statusId, page, size int
 	}
 	listProject := []*entity.Project{}
 	err := r.db.Model(&entity.Project{}).
+		Distinct().
 		Select("project.id", "project.name", "project.description", "project.image", "project.created_at", "project.updated_at").
 		Joins("join user_project_role upr on upr.project_id = project.id").
 		Where("project.user_id = ?", userId).
@@ -233,10 +234,11 @@ func (r ProjectRepository) GetAllProject(userId, page, size int, sortType, sortB
 	}
 	listProject := []*entity.Project{}
 	err := r.db.Model(&entity.Project{}).
+		Distinct().
 		Preload("User").
 		Preload("Status").
-		Where("user_id = ?", userId).
 		Joins("join user_project_role upr on upr.project_id = project.id").
+		Where("project.user_id = ?", userId).
 		Offset(offset).
 		Limit(size).
 		Order(fmt.Sprintf("%v %v", sortBy, sortType)).

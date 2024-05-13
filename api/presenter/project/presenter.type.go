@@ -66,3 +66,22 @@ type Role struct {
 	Name string `json:"name"`
 	Type string `json:"type"`
 }
+
+type ProjectAdminPresenter struct {
+	Id          int    `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Image       string `json:"image"`
+	User *UserPresenter `json:"user"`
+	Status *Status `json:"status"`
+	CreatedAt   string `json:"createdAt"`
+	UpdatedAt   string `json:"updatedAt"`
+}
+
+type Status struct {
+	Id          int    `json:"id"`
+	Code        string `json:"code"`
+	Name        string `json:"name"`
+	Type        string `json:"type"`
+	Description string `json:"description"`
+}

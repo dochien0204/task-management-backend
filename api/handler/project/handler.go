@@ -47,5 +47,9 @@ func MakeHandlers(app *gin.Engine, projectService project.UseCase, verifier util
 		projectGroup.PUT("/update", middleware.JWTVerifyMiddleware(verifier), middleware.PermissionMiddleware(define.ADMIN), tx.DBTransactionMiddleware(), func(ctx *gin.Context) {
 			updateProject(ctx, projectService)
 		})
+
+		projectGroup.GET("/list/admin", middleware.JWTVerifyMiddleware(verifier), middleware.PermissionMiddleware(define.ADMIN), func(ctx *gin.Context) {
+			getAllProject(ctx, projectService)
+		})
 	}
 }

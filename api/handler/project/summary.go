@@ -308,3 +308,42 @@ func updateProject(ctx *gin.Context, projectService project.UseCase) {
 
 	ctx.JSON(http.StatusOK, response)
 }
+
+func getAllProject(ctx *gin.Context, projectService project.UseCase) {
+	page := util.GetPage(ctx, "page")
+	pageSize := util.GetPageSize(ctx, "size")
+	sortBy := ctx.Query("sortBy")
+	sortType := ctx.Query("sortType")
+
+	token, err := util.GetToken(ctx)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	claims, err := util.ParseAccessToken(token)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	listProject, count, err := projectService.GetAllProject(claims.UserId, page, pageSize, sortType, sortBy)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	response := presenter.PaginationResponse {
+		Status: fmt.Sprint(http.StatusOK),
+		Message: i18n.MustGetMessage(config.SUCCESS),
+		Results: convertListProjectEntityAdminToPresenter(listProject),
+		Pagination: presenter.Pagination{
+			Count: count,
+			NumPages: int(util.CalculateTotalPages(count, pageSize)),
+			DisplayRecord: len(listProject),
+			Page: page,
+		},
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
