@@ -261,3 +261,12 @@ func (r ProjectRepository) CountAllProject(userId int) (int, error) {
 
 	return int(count), nil
 }
+
+func (r ProjectRepository) DeleteProject(listId []int) error {
+	err := r.db.Delete(&entity.Project{}, listId).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

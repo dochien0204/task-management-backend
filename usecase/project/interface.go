@@ -23,6 +23,7 @@ type ProjectRepository interface {
 	FindById(id int ) (*entity.Project, error)
 	GetAllProject(userId, page, size int, sortType, sortBy string) ([]*entity.Project, error)
 	CountAllProject(userId int) (int, error)
+	DeleteProject(listId []int) error
 }
 
 type UserProjectRoleRepository interface {
@@ -60,4 +61,5 @@ type UseCase interface {
 	GetListActivityByDateOfUser(projectId, userId int, timeOffset int, fromDate time.Time, toDate time.Time) ([]*entity.Activity, error)
 	UpdateProject(payload payload.ProjectUpdatePayload) error
 	GetAllProject(userId, page, size int, sortType, sortBy string) ([]*entity.Project, int, error)
+	DeleteProjectByListId(listId []int) error
 }

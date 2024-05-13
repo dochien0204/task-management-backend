@@ -347,3 +347,26 @@ func getAllProject(ctx *gin.Context, projectService project.UseCase) {
 
 	ctx.JSON(http.StatusOK, response)
 }
+
+func deleteProject(ctx *gin.Context, projectService project.UseCase) {
+	var payload projectPayload.ProjectDeletePayload
+	err := ctx.ShouldBindJSON(&payload)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	trxHandle := ctx.MustGet("db_trx").(*gorm.DB)
+	err = projectService.WithTrx(trxHandle).DeleteProjectByListId(payload.ListProjectId)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	response := presenter.BasicResponse {
+		Status: fmt.Sprint(http.StatusOK),
+		Message: ginI18n.MustGetMessage(config.SUCCESS),
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
