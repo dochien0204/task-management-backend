@@ -44,6 +44,12 @@ func (s Service) CreateProject(userId int, project *entity.Project) error {
 		return entity.ErrProjectAlreadyExists
 	}
 
+	statusActive, err := s.statusRepo.GetStatusByCodeAndType(define.PROJECT_CODE, define.PROJECT_ACTIVE_CODE)
+	if err != nil {
+		return err
+	}
+	
+	project.StatusId = statusActive.Id
 	//Create project
 	err = s.projectRepo.CreateProject(project)
 	if err != nil {
