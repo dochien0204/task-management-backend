@@ -129,3 +129,36 @@ func convertUserProjectOverviewToPresenter(userOpenTask *entity.UserTaskCount, u
 
 	return presenter
 }
+
+func convertListProjectEntityAdminToPresenter(listData []*entity.Project) []*projectPresenter.ProjectAdminPresenter {
+	listProjectPresenter := []*projectPresenter.ProjectAdminPresenter{}
+	for _, item := range listData {
+		projectPresenter := &projectPresenter.ProjectAdminPresenter{
+			Id:          item.Id,
+			Name:        item.Name,
+			Description: item.Description,
+			Image:       item.Image,
+			CreatedAt:   item.CreatedAt.Format(config.LAYOUT),
+			UpdatedAt:   item.UpdatedAt.Format(config.LAYOUT),
+			Status: &projectPresenter.Status{
+				Id: item.Status.Id,
+				Code: item.Status.Code,
+				Name: item.Status.Name,
+				Type: item.Status.Type,
+				Description: item.Status.Description,
+			},
+			User: &projectPresenter.UserPresenter{
+				Id: item.User.Id,
+				Username: item.User.Username,
+				Name: item.User.Name,
+				PhoneNumber: item.User.PhoneNumber,
+				Email: item.User.Email,
+				Avatar: item.User.Avatar,
+			},
+		}
+
+		listProjectPresenter = append(listProjectPresenter, projectPresenter)
+	}
+
+	return listProjectPresenter
+}

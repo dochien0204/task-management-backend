@@ -9,6 +9,8 @@ type Project struct {
 	Image       string
 	StatusId int
 	Status *Status
+	UserId int 
+	User *User
 
 	CreatedAt time.Time
 	UpdatedAt time.Time
