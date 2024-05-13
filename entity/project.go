@@ -1,6 +1,10 @@
 package entity
 
-import "time"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type Project struct {
 	Id          int `gorm:"primaryKey"`
@@ -14,4 +18,5 @@ type Project struct {
 
 	CreatedAt time.Time
 	UpdatedAt time.Time
+	DeleteAt gorm.DeletedAt `gorm:"index;column:deleted_at"`
 }

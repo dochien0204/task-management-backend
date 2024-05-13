@@ -2,6 +2,7 @@ package task
 
 import (
 	payload "source-base-go/api/payload/task"
+	taskPayload "source-base-go/api/payload/task"
 	"source-base-go/entity"
 	"source-base-go/infrastructure/repository"
 	"time"
@@ -12,7 +13,7 @@ import (
 type TaskRepository interface {
 	WithTrx(trxHandle *gorm.DB) repository.TaskRepository
 
-	Create(data *entity.Task) error
+	Create(data *entity.Task) (error)
 	GetListTaskOfProject(projectId int, page, size int, sortType, sortBy string) ([]*entity.Task, error)
 	GetTaskDetail(taskId int) (*entity.Task, error)
 	UpdateTask(taskId int, mapData map[string]interface{}) error
@@ -67,7 +68,7 @@ type EmailRepository interface {
 type UseCase interface {
 	WithTrx(trxHandle *gorm.DB) Service
 
-	CreateTask(userId int, payload payload.TaskPayload) error
+	CreateTask(userId int, payload taskPayload.TaskPayload) (int, error)
 	GetListTaskOfProject(projectId int, page, size int, sortType, sortBy string) ([]*entity.Task, []*entity.Status, error)
 	GetTaskDetail(taskId int) (*entity.Task, error)
 	UpdateTask(payload payload.TaskUpdatePayload) error
