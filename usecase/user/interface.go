@@ -23,6 +23,8 @@ type UserRepository interface {
 	IsUserEmailExists(email string) (bool, error)
 	UpdateAvatar(userId int, avatar string) error
 	DeleteUserById(id []int) error
+	UpdateUser(userId int, mapData map[string]interface{}) error
+	FindById(id int ) (*entity.User, error)
 }
 
 type RoleRepository interface {

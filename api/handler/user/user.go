@@ -190,3 +190,32 @@ func deleteUser(ctx *gin.Context, userService user.UseCase) {
 
 	ctx.JSON(http.StatusOK, response)
 }
+
+func updateUser(ctx *gin.Context, userService user.UseCase) {
+	var payload payload.UserUpdatePayload
+	err := ctx.ShouldBindJSON(&payload)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	trxHandle := ctx.MustGet("db_trx").(*gorm.DB)
+	err = userService.WithTrx(trxHandle).UpdateUser(payload)
+	if err != nil {
+		switch err {
+		case entity.ErrEmailAlreadyExists:
+			util.HandleException(ctx, http.StatusBadRequest, err)
+			return
+		default:
+			util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+			return
+		}
+	}
+
+	response := presenter.BasicResponse {
+		Status: fmt.Sprint(http.StatusOK),
+		Message: ginI18n.MustGetMessage(config.SUCCESS),
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}

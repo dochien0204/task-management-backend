@@ -2,6 +2,7 @@ package user
 
 import (
 	"fmt"
+	payload "source-base-go/api/payload/user"
 	"source-base-go/config"
 	"source-base-go/entity"
 	"source-base-go/infrastructure/repository/define"
@@ -183,4 +184,35 @@ func (s Service) UpdateAvatar(userId int, avatar string) error {
 
 func (s Service) DeleteUserById(id []int) error {
 	return s.userRepository.DeleteUserById(id)
+}
+
+func (s Service) UpdateUser(payload payload.UserUpdatePayload) error {
+	mapData := map[string]interface{}{}
+	mapData["name"] = payload.Name
+	mapData["phone_number"] = payload.PhoneNumber
+	mapData["address"] = payload.Address
+	mapData["email"] = payload.Email
+
+	user, err := s.userRepository.FindById(payload.Id)
+	if err != nil {
+		return err
+	}
+
+	if user.Email != payload.Email {
+		isEmailExists, err := s.userRepository.IsUserEmailExists(user.Email)
+		if err != nil {
+			return entity.ErrBadRequest
+		}
+
+		if isEmailExists {
+			return entity.ErrEmailAlreadyExists
+		}
+	}
+
+	err = s.userRepository.UpdateUser(payload.Id, mapData)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

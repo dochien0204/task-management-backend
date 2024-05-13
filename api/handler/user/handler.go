@@ -30,5 +30,8 @@ func MakeHandlers(app *gin.Engine, userService user.UseCase, verifier util.Verif
 		userGroup.DELETE("/delete", middleware.JWTVerifyMiddleware(verifier), middleware.PermissionMiddleware(define.ADMIN), tx.DBTransactionMiddleware(), func(ctx *gin.Context) {
 			deleteUser(ctx, userService)
 		})
+		userGroup.PUT("/update", middleware.JWTVerifyMiddleware(verifier), middleware.PermissionMiddleware(define.ADMIN), tx.DBTransactionMiddleware(), func(ctx *gin.Context) {
+			updateUser(ctx, userService)
+		})
 	}
 }

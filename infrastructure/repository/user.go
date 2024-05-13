@@ -208,3 +208,16 @@ func (r UserRepository) DeleteUserById(id []int) error {
 
 	return nil
 }
+
+func (r UserRepository) UpdateUser(userId int, mapData map[string]interface{}) error {
+	err := r.db.Model(&entity.User{}).
+		Select("name", "phone_number", "address", "email").
+		Where("id = ?", userId).
+		Updates(mapData).Error
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
