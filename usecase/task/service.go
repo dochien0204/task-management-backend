@@ -47,7 +47,7 @@ func (s Service) WithTrx(trxHandle *gorm.DB) Service {
 	return s
 }
 
-func (s Service) CreateTask(userId int, payload taskPayload.TaskPayload) error {
+func (s Service) CreateTask(userId int, payload taskPayload.TaskPayload) (int, error) {
 	data := &entity.Task {
 		Name: payload.Name,
 		Description: payload.Description,
@@ -71,7 +71,7 @@ func (s Service) CreateTask(userId int, payload taskPayload.TaskPayload) error {
 
 	err := s.taskRepo.Create(data)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	//Create task document
@@ -89,19 +89,19 @@ func (s Service) CreateTask(userId int, payload taskPayload.TaskPayload) error {
 	
 		err = s.taskDocumentRepo.CreateDocumentsForTask(listTaskDocument)
 		if err != nil {
-			return err
+			return 0, err
 		}
 	}
 
 	//Create activity
 	user, err := s.userRepo.FindById(userId)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	project, err := s.projectRepo.FindById(payload.ProjectId)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	description := fmt.Sprintf("User (%v) has created a task (%v) for the project (%v)", user.Username, data.Name, project.Name)
@@ -114,7 +114,7 @@ func (s Service) CreateTask(userId int, payload taskPayload.TaskPayload) error {
 	//Find all user in project
 	listUser, err := s.userProjectRoleRepo.FindAllUserOfProject(data.ProjectId)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	listEmail := []string{}
@@ -124,16 +124,16 @@ func (s Service) CreateTask(userId int, payload taskPayload.TaskPayload) error {
 
 	err = s.emailRepo.SendMailForUsers(description, listEmail, "TASK CREATE")
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	//Send mail
 	err = s.activityRepo.CreateActivity(activity)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	
-	return nil
+	return data.Id, nil
 }
 
 func (s Service) GetListTaskOfProject(projectId int, page, size int, sortType, sortBy string) ([]*entity.Task, []*entity.Status, error) {

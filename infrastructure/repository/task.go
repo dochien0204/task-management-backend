@@ -30,7 +30,7 @@ func (r TaskRepository) WithTrx(trxHandle *gorm.DB) TaskRepository {
 	return r
 }
 
-func (r TaskRepository) Create(data *entity.Task) error {
+func (r TaskRepository) Create(data *entity.Task) (error) {
 	err := r.db.Model(&entity.Task{}).
 		Create(&data).Error
 	

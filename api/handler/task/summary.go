@@ -38,7 +38,7 @@ func createTask(ctx *gin.Context, taskService task.UseCase) {
 	}
 
 	trxHandle := ctx.MustGet("db_trx").(*gorm.DB)
-	err = taskService.WithTrx(trxHandle).CreateTask(claims.UserId, taskPayload)
+	id, err := taskService.WithTrx(trxHandle).CreateTask(claims.UserId, taskPayload)
 	if err != nil {
 		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
 		return
@@ -48,6 +48,9 @@ func createTask(ctx *gin.Context, taskService task.UseCase) {
 	response := presenter.BasicResponse{
 		Status:  fmt.Sprint(http.StatusOK),
 		Message: i18n.MustGetMessage(config.SUCCESS),
+		Results: map[string]interface{}{
+			"id": id,
+		},
 	}
 
 	ctx.JSON(http.StatusOK, response)
