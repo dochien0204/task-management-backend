@@ -23,3 +23,7 @@ type ProjectUpdatePayload struct {
 	Name string `json:"name"`
 	StatusId int `json:"statusId"`
 }
+
+type ProjectDeletePayload struct {
+	ListProjectId []int `json:"listProjectId"`
+}

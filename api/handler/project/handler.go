@@ -51,5 +51,9 @@ func MakeHandlers(app *gin.Engine, projectService project.UseCase, verifier util
 		projectGroup.GET("/list/admin", middleware.JWTVerifyMiddleware(verifier), middleware.PermissionMiddleware(define.ADMIN), func(ctx *gin.Context) {
 			getAllProject(ctx, projectService)
 		})
+
+		projectGroup.DELETE("/delete", middleware.JWTVerifyMiddleware(verifier), middleware.PermissionMiddleware(define.ADMIN), tx.DBTransactionMiddleware(), func(ctx *gin.Context) {
+			deleteProject(ctx, projectService)
+		})
 	}
 }

@@ -230,4 +230,8 @@ func (s Service) GetAllProject(userId, page, size int, sortType, sortBy string) 
 	}
 
 	return listProject, count, nil
-} 	
+}
+
+func (s Service) DeleteProjectByListId(listId []int) error {
+	return s.projectRepo.DeleteProject(listId)
+}
