@@ -63,3 +63,17 @@ func (r RoleRepository) FindAllRolesOfUser(userId int) ([]*entity.Role, error) {
 
 	return listRole, nil
 }
+
+func (r RoleRepository) FindAllRoleByType(typeRole string) ([]*entity.Role, error) {
+	listRole := []*entity.Role{}
+	err := r.db.
+		Select("role.*").
+		Where("type = ?", typeRole).
+		Find(&listRole).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return listRole, nil
+}

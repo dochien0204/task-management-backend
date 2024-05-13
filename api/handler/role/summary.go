@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"source-base-go/api/presenter"
 	rolePresenter "source-base-go/api/presenter/role"
 	"source-base-go/config"
 	"source-base-go/entity"
@@ -47,6 +48,26 @@ func findByCode(ctx *gin.Context, roleService role.UseCase) {
 		Status:  fmt.Sprint(http.StatusOK),
 		Message: ginI18n.MustGetMessage(config.SUCCESS),
 		Results: convertRoleEntityToPresenter(role),
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
+
+func findByType(ctx *gin.Context, roleService role.UseCase) {
+	//Get URL param
+	typeRole := ctx.Query("type")
+	//Get data
+	listRole, err := roleService.FindAllRoleByType(typeRole)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	//Response in JSON
+	response := presenter.BasicResponse{
+		Status:  fmt.Sprint(http.StatusOK),
+		Message: ginI18n.MustGetMessage(config.SUCCESS),
+		Results: convertListRoleEntityToPresenter(listRole),
 	}
 
 	ctx.JSON(http.StatusOK, response)
