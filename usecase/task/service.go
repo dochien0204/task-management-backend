@@ -268,3 +268,26 @@ func (s Service) GetListTaskProjectByUserAndStatus(projectId int, assigneeId, st
 
 	return listTask, count, nil
 }
+
+func (s Service) DeleteTask(userId, taskId int) error {
+	task, err := s.taskRepo.GetTaskDetail(taskId)
+	if err != nil {
+		return err
+	}
+
+	roles, err := s.userProjectRoleRepo.GetRoleUserInProject(task.ProjectId, userId)
+	if err != nil {
+		return err
+	}
+
+	if roles.Role.Code != string(define.OWNER) && roles.Role.Code != string(define.PROJECT_MANAGER) {
+		return entity.ErrNotHavePermissionDeleteTask
+	}
+
+	err = s.taskRepo.DeleteTask(taskId)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

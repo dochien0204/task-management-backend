@@ -42,5 +42,9 @@
   "emailAlreadyExists": {
     "one": "Email đã tồn tại",
     "other": "Email đã tồn tại"
+  },
+  "cannotDeleteTask": {
+    "one": "Bạn không có quyền xóa task này",
+    "other": "Bạn không có quyền xóa task này"
   }
 }

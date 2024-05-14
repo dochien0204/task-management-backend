@@ -271,3 +271,12 @@ func (r TaskRepository) CountListTaskProjectByUser(projectId int, assigneeId int
 
 	return int(count), nil
 }
+
+func (r TaskRepository) DeleteTask(taskId int) error {
+	err := r.db.Delete(&entity.Task{}, taskId).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
