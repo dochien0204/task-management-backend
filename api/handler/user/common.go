@@ -10,6 +10,11 @@ func convertUserEntityToPresenter(user *entity.User) *userPresenter.UserProfileP
 	return &userPresenter.UserProfilePresenter{
 		Id:       user.Id,
 		Username: user.Username,
+		Name: user.Name,
+		PhoneNumber: user.PhoneNumber,
+		Email: user.Email,
+		Avatar: user.Avatar,
+		Address: user.Address,
 		Status:   statusHandler.ConvertStatusEntityToPresenter(user.Status),
 	}
 }
