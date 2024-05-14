@@ -60,4 +60,5 @@ type UseCase interface {
 	UpdateAvatar(userId int, avatar string) error
 	DeleteUserById(id []int) error
 	ChangePassword(userId int, payload payload.UserChangePassword) error
+	ResetPassword(userId int) error
 }

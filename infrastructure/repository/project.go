@@ -224,7 +224,7 @@ func (r ProjectRepository) UpdateProject(projectId int, mapData map[string]inter
 	return nil
 }
 
-func (r ProjectRepository) GetAllProject(userId, page, size int, sortType, sortBy string) ([]*entity.Project, error) {
+func (r ProjectRepository) GetAllProject(keyword string, page, size int, sortType, sortBy string) ([]*entity.Project, error) {
 	offset := util.CalculateOffset(page, size)
 	if sortType == "" && sortBy == "" {
 		sortType = "DESC"
@@ -245,12 +245,18 @@ func (r ProjectRepository) GetAllProject(userId, page, size int, sortType, sortB
 		sortBy = "project.created_at"
 	}
 	listProject := []*entity.Project{}
-	err := r.db.Model(&entity.Project{}).
+	chain := r.db.Model(&entity.Project{}).
 		Distinct().
 		Preload("User").
 		Preload("Status").
-		Joins("join user_project_role upr on upr.project_id = project.id").
-		Where("project.user_id = ?", userId).
+		Joins("join user_project_role upr on upr.project_id = project.id")
+
+	if keyword != "" {
+		chain = chain.Where("LOWER(project.name) LIKE ?", "%"+keyword+"%").
+			Or("LOWER(project.description) LIKE ?", "%"+keyword+"%")
+	}
+		
+	err := chain.
 		Offset(offset).
 		Limit(size).
 		Order(fmt.Sprintf("%v %v", sortBy, sortType)).
@@ -262,10 +268,11 @@ func (r ProjectRepository) GetAllProject(userId, page, size int, sortType, sortB
 	return listProject, nil
 }
 
-func (r ProjectRepository) CountAllProject(userId int) (int, error) {
+func (r ProjectRepository) CountAllProject(keyword string) (int, error) {
 	var count int64
 	err := r.db.Model(&entity.Project{}).
-		Where("user_id = ?", userId).
+		Where("LOWER(project.name) LIKE ?", "%"+keyword+"%").
+		Or("LOWER(project.description) LIKE ?", "%"+keyword+"%").
 		Count(&count).Error
 	if err != nil {
 		return 0, err
