@@ -145,7 +145,7 @@ func (s Service) GetListMemberByProject(projectId int, page, size int, keyword, 
 		return nil, 0, err
 	}
 
-	count, err := s.projectRepo.CountListMemberByProject(projectId)
+	count, err := s.projectRepo.CountListMemberByProject(projectId, keyword)
 	if err != nil {
 		return nil, 0, err
 	}

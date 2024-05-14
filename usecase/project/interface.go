@@ -16,7 +16,7 @@ type ProjectRepository interface {
 	CreateProject(data *entity.Project) error
 	GetListProjectOfUser(userId, statusId, page, size int, sortType, sortBy string) ([]*entity.Project, error)
 	GetListMemberByProject(projectId int, page, size int, keyword, sortType, sortBy string) ([]*entity.UserTaskCount, error)
-	CountListMemberByProject(projectId int) (int, error)
+	CountListMemberByProject(projectId int, keyword string) (int, error)
 	CountListTaskOpenUser(projectId, userId, statusId int) (*entity.UserTaskCount, error)
 	CountListTaskByStatus(projectId, userId, statusId int) (*entity.UserTaskCount, error)
 	UpdateProject(projectId int, mapData map[string]interface{}) error
