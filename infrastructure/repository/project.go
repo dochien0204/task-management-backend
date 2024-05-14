@@ -137,17 +137,23 @@ func (r ProjectRepository) GetListMemberByProject(projectId int, page, size int,
 	return listUser, nil
 }
 
-func (r ProjectRepository) CountListMemberByProject(projectId int) (int, error){
+func (r ProjectRepository) CountListMemberByProject(projectId int, keyword string) (int, error){
 	var count int64
-	err := r.db.Model(&entity.User{}).
+	chain := r.db.Model(&entity.User{}).
 		Select(`"user".*`).
 		Preload("Role").
 		Preload("Status").
 		Joins(`left join user_project_role upr on upr.user_id = "user".id`).
 		Joins("left join project p on p.id = upr.project_id").
 		Joins(`left join task t on t.assignee_id = "user".id OR t.reviewer_id = "user".id`).
-		Where("upr.project_id = ?", projectId).
-		Group(`"user".id`).
+		Where("upr.project_id = ?", projectId)
+
+	if keyword != "" {
+		chain = chain.Where(`"user".username LIKE ?`, "%"+keyword+"%").
+			Or(`"user".name LIKE ?`, "%"+keyword+"%")
+	}
+
+	err := chain.Group(`"user".id`).
 		Count(&count).Error
 
 	if err != nil {
