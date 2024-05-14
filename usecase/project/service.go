@@ -218,13 +218,13 @@ func (s Service) UpdateProject(payload payload.ProjectUpdatePayload) error {
 	return nil
 }
 
-func (s Service) GetAllProject(userId, page, size int, sortType, sortBy string) ([]*entity.Project, int, error) {
-	count, err := s.projectRepo.CountAllProject(userId)
+func (s Service) GetAllProject(keyword string, page, size int, sortType, sortBy string) ([]*entity.Project, int, error) {
+	count, err := s.projectRepo.CountAllProject(keyword)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	listProject, err := s.projectRepo.GetAllProject(userId, page, size, sortType, sortBy)
+	listProject, err := s.projectRepo.GetAllProject(keyword, page, size, sortType, sortBy)
 	if err != nil {
 		return nil, 0, err
 	}

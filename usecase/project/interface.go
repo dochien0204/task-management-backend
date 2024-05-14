@@ -21,8 +21,8 @@ type ProjectRepository interface {
 	CountListTaskByStatus(projectId, userId, statusId int) (*entity.UserTaskCount, error)
 	UpdateProject(projectId int, mapData map[string]interface{}) error
 	FindById(id int ) (*entity.Project, error)
-	GetAllProject(userId, page, size int, sortType, sortBy string) ([]*entity.Project, error)
-	CountAllProject(userId int) (int, error)
+	GetAllProject(keyword string, page, size int, sortType, sortBy string) ([]*entity.Project, error)
+	CountAllProject(keyword string) (int, error)
 	DeleteProject(listId []int) error
 }
 
@@ -60,6 +60,6 @@ type UseCase interface {
 	GetOverviewUserTaskProject(projectId, userId int) (*entity.UserTaskCount, *entity.UserTaskCount, *entity.UserProjectRole, error)
 	GetListActivityByDateOfUser(projectId, userId int, timeOffset int, fromDate time.Time, toDate time.Time) ([]*entity.Activity, error)
 	UpdateProject(payload payload.ProjectUpdatePayload) error
-	GetAllProject(userId, page, size int, sortType, sortBy string) ([]*entity.Project, int, error)
+	GetAllProject(keyword string, page, size int, sortType, sortBy string) ([]*entity.Project, int, error)
 	DeleteProjectByListId(listId []int) error
 }

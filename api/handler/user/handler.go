@@ -36,5 +36,8 @@ func MakeHandlers(app *gin.Engine, userService user.UseCase, verifier util.Verif
 		userGroup.POST("/change-password", tx.DBTransactionMiddleware(), func(ctx *gin.Context) {
 			changePassword(ctx, userService)
 		})
+		userGroup.POST("/reset-password", middleware.JWTVerifyMiddleware(verifier), middleware.PermissionMiddleware(define.ADMIN), tx.DBTransactionMiddleware(), func(ctx *gin.Context) {
+			resetPassword(ctx, userService)
+		})
 	}
 }

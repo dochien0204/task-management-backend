@@ -240,3 +240,34 @@ func (s Service) ChangePassword(userId int, payload payload.UserChangePassword) 
 
 	return nil
 }
+
+func (s Service) ResetPassword(userId int) error {
+	user, err := s.userRepository.FindById(userId)
+	if err != nil {
+		return err
+	}
+
+	randomPassword, err := util.GenerateRandomString(8)
+	if err != nil {
+		return entity.ErrBadRequest
+	}
+
+	hashPassword, err := bcrypt.GenerateFromPassword([]byte(randomPassword), 10)
+	if err != nil {
+		return err
+	}
+
+	err = s.userRepository.ChangePassword(userId, string(hashPassword))
+	if err != nil {
+		return err
+	}
+
+	//send mail receive new password
+	message := fmt.Sprintf("Mật khẩu mới cho tài khoản PMA của bạn (%v) là: %v", user.Username, randomPassword)
+	err = s.emailRepo.SendMailPasswordForUser(message, []string{user.Email}, "RESET PASSWORD")
+	if err != nil {
+		return entity.ErrBadRequest
+	}
+
+	return nil
+}

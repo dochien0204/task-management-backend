@@ -10,6 +10,7 @@ import (
 	"source-base-go/infrastructure/repository/util"
 	"source-base-go/usecase/project"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-contrib/i18n"
@@ -315,6 +316,7 @@ func getAllProject(ctx *gin.Context, projectService project.UseCase) {
 	pageSize := util.GetPageSize(ctx, "size")
 	sortBy := ctx.Query("sortBy")
 	sortType := ctx.Query("sortType")
+	keyword := ctx.Query("keyword")
 
 	token, err := util.GetToken(ctx)
 	if err != nil {
@@ -322,13 +324,13 @@ func getAllProject(ctx *gin.Context, projectService project.UseCase) {
 		return
 	}
 
-	claims, err := util.ParseAccessToken(token)
+	_, err = util.ParseAccessToken(token)
 	if err != nil {
 		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
 		return
 	}
 
-	listProject, count, err := projectService.GetAllProject(claims.UserId, page, pageSize, sortType, sortBy)
+	listProject, count, err := projectService.GetAllProject(strings.ToLower(keyword), page, pageSize, sortType, sortBy)
 	if err != nil {
 		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
 		return

@@ -20,3 +20,7 @@ type UserChangePassword struct {
 	OldPassword string `json:"oldPassword"`
 	NewPassword string `json:"newPassword"`
 }
+
+type UserResetPassword struct {
+	UserId int `json:"userId"`
+}
