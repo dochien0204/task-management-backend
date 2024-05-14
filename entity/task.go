@@ -1,6 +1,10 @@
 package entity
 
-import "time"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type Task struct {
 	Id int `gorm:"primaryKey"`
@@ -22,4 +26,5 @@ type Task struct {
 	DueDate *time.Time
 	CreatedAt time.Time
 	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt `gorm:"index;column:deleted_at"`
 }

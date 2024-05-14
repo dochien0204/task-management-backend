@@ -343,3 +343,40 @@ func getListTaskProjectByUserAndStatus(ctx *gin.Context, taskService task.UseCas
 	}
 	ctx.JSON(http.StatusOK, response)
 }
+
+func deleteTask(ctx *gin.Context, taskService task.UseCase) {
+	taskId := ctx.Query("taskId")
+	taskIdInt, _ := strconv.Atoi(taskId)
+
+	token, err := util.GetToken(ctx)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	claims, err := util.ParseAccessToken(token)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return 
+	}
+
+	trxHandle := ctx.MustGet("db_trx").(*gorm.DB)
+	err = taskService.WithTrx(trxHandle).DeleteTask(claims.UserId, taskIdInt)
+	if err != nil {
+		switch err {
+		case entity.ErrNotHavePermissionDeleteTask:
+			util.HandleException(ctx, http.StatusForbidden, err)
+			return
+		default:
+			util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+			return
+		}
+	}
+
+	response := presenter.BasicResponse {
+		Status: fmt.Sprint(http.StatusOK),
+		Message: i18n.MustGetMessage(config.SUCCESS),
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}

@@ -128,7 +128,7 @@ func (r TaskRepository) GetListTaskByDate(projectId int, userId int, timeOffset 
 		Where("assignee_id = ?", userId)
 
 	if !fromDate.IsZero() {
-		chain = chain.Where(fmt.Sprintf(`(task.due_date) + interval '%v hour' >= ?`, timeOffset), fromDate)
+		chain = chain.Where(fmt.Sprintf(`(task.start_date) + interval '%v hour' >= ?`, timeOffset), fromDate)
 	}
 
 	if !toDate.IsZero() {
@@ -270,4 +270,13 @@ func (r TaskRepository) CountListTaskProjectByUser(projectId int, assigneeId int
 	}
 
 	return int(count), nil
+}
+
+func (r TaskRepository) DeleteTask(taskId int) error {
+	err := r.db.Delete(&entity.Task{}, taskId).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

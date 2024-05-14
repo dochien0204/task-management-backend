@@ -50,6 +50,8 @@ func MakeHandlers(app *gin.Engine, taskService task.UseCase, verifier util.Verif
 		taskGroup.GET("/list/user-status", func(ctx *gin.Context) {
 			getListTaskProjectByUserAndStatus(ctx, taskService)
 		})
-
+		taskGroup.DELETE("/delete", tx.DBTransactionMiddleware(), func(ctx *gin.Context) {
+			deleteTask(ctx, taskService)
+		})
 	}
 }

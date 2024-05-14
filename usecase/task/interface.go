@@ -23,6 +23,7 @@ type TaskRepository interface {
 	CountListTaskProjectByUserAndStatus(projectId int, assigneeId, statusId int) (int, error)
 	GetListTaskProjectByUser(projectId int, assigneeId, page, size int, sortType, sortBy string) ([]*entity.Task, error)
 	CountListTaskProjectByUser(projectId int, assigneeId int) (int, error)
+	DeleteTask(taskId int) error
 }
 
 type StatusRepository interface {
@@ -61,6 +62,7 @@ type ProjectRepository interface {
 
 type UserProjectRoleRepository interface {
 	FindAllUserOfProject(projectId int) ([]*entity.User, error)
+	GetRoleUserInProject(projectId, userId int) (*entity.UserProjectRole, error)
 }
 
 type EmailRepository interface {
@@ -79,4 +81,5 @@ type UseCase interface {
 	CreateDiscussionTask(userId, taskId int, comment string) error
 	GetListDiscussionOfTask(taskId int, page, size int, sortBy, sortType string) ([]*entity.Discussion, int, error)
 	GetListTaskProjectByUserAndStatus(projectId int, assigneeId, statusId int, page, size int, sortType, sortBy string) ([]*entity.Task, int, error)
+	DeleteTask(userId, taskId int) error
 }

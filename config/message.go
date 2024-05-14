@@ -14,4 +14,5 @@ const (
 	ACCOUNT_ALREADY_EXISTS = "accountAlreadyExists"
 	PROJECT_ALREADY_EXISTS = "projectAlreadyExists"
 	EMAIL_ALREADY_EXISTS = "emailAlreadyExists"
+	NOT_HAVE_PERMISSION_DELETE_TASL = "cannotDeleteTask"
 )
