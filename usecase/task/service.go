@@ -240,14 +240,31 @@ func (s Service) GetListDiscussionOfTask(taskId int, page, size int, sortBy, sor
 }
 
 func (s Service) GetListTaskProjectByUserAndStatus(projectId int, assigneeId, statusId int, page, size int, sortType, sortBy string) ([]*entity.Task, int, error) {
-	listTask, err := s.taskRepo.GetListTaskProjectByUserAndStatus(projectId, assigneeId, statusId, page, size, sortType, sortBy)
+
+
+	if statusId != 0 {
+		listTask, err := s.taskRepo.GetListTaskProjectByUserAndStatus(projectId, assigneeId, statusId, page, size, sortType, sortBy)
+		if err != nil {
+			return nil, 0, err
+		}
+	
+		count, err := s.taskRepo.CountListTaskProjectByUserAndStatus(projectId, assigneeId, statusId)
+		if err != nil {
+			return nil, 0, err
+		}
+
+		return listTask, count, nil
+	}
+
+	listTask, err := s.taskRepo.GetListTaskProjectByUser(projectId, assigneeId, page, size, sortType, sortBy)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	count, err := s.taskRepo.CountListTaskProjectByUserAndStatus(projectId, assigneeId, statusId)
+	count, err := s.taskRepo.CountListTaskProjectByUser(projectId, assigneeId)
 	if err != nil {
 		return nil, 0, err
 	}
+
 	return listTask, count, nil
 }
