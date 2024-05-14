@@ -128,7 +128,7 @@ func (r TaskRepository) GetListTaskByDate(projectId int, userId int, timeOffset 
 		Where("assignee_id = ?", userId)
 
 	if !fromDate.IsZero() {
-		chain = chain.Where(fmt.Sprintf(`(task.due_date) + interval '%v hour' >= ?`, timeOffset), fromDate)
+		chain = chain.Where(fmt.Sprintf(`(task.start_date) + interval '%v hour' >= ?`, timeOffset), fromDate)
 	}
 
 	if !toDate.IsZero() {
