@@ -212,3 +212,62 @@ func (r TaskRepository) CountListTaskProjectByUserAndStatus(projectId int, assig
 
 	return int(count), nil
 }
+
+func (r TaskRepository) GetListTaskProjectByUser(projectId int, assigneeId, page, size int, sortType, sortBy string) ([]*entity.Task, error) {
+	offset := util.CalculateOffset(page, size)
+	if sortType == "" && sortBy == "" {
+		sortType = "DESC"
+		sortBy = "project.created_at"
+	}
+	if sortType == "" {
+		sortType = "DESC"
+	}
+
+	switch sortBy {
+	case "createdAt":
+		sortBy = "task.created_at"
+
+	case "updatedAt":
+		sortBy = "task.updated_at"
+
+	default:
+		sortBy = "task.created_at"
+	}
+
+	listTask := []*entity.Task{}
+	err := r.db.Model(&entity.Task{}).
+		Preload("User").
+		Preload("Assignee").
+		Preload("Category").
+		Preload("Status").
+		Where("project_id = ?", projectId).
+		Where("assignee_id = ?", assigneeId).
+		Offset(offset).
+		Limit(size).
+		Order(fmt.Sprintf("%v %v", sortBy, sortType)).
+		Find(&listTask).Error
+	
+	if err != nil {
+		return nil, err
+	}
+
+	return listTask, nil
+}
+
+func (r TaskRepository) CountListTaskProjectByUser(projectId int, assigneeId int) (int, error) {
+	var count int64
+	err := r.db.Model(&entity.Task{}).
+		Preload("User").
+		Preload("Assignee").
+		Preload("Category").
+		Preload("Status").
+		Where("project_id = ?", projectId).
+		Where("assignee_id = ?", assigneeId).
+		Count(&count).Error
+	
+	if err != nil {
+		return 0, err
+	}
+
+	return int(count), nil
+}

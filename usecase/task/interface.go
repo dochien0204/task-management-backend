@@ -21,6 +21,8 @@ type TaskRepository interface {
 	GetListTaskByDate(projectId int, userId int, timeOffset int, fromDate time.Time, toDate time.Time) ([]*entity.Task, error)
 	GetListTaskProjectByUserAndStatus(projectId int, assigneeId, statusId int, page, size int, sortType, sortBy string) ([]*entity.Task, error)
 	CountListTaskProjectByUserAndStatus(projectId int, assigneeId, statusId int) (int, error)
+	GetListTaskProjectByUser(projectId int, assigneeId, page, size int, sortType, sortBy string) ([]*entity.Task, error)
+	CountListTaskProjectByUser(projectId int, assigneeId int) (int, error)
 }
 
 type StatusRepository interface {
