@@ -8,6 +8,7 @@ import (
 	"source-base-go/infrastructure/repository/define"
 	"source-base-go/infrastructure/repository/util"
 
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -210,6 +211,29 @@ func (s Service) UpdateUser(payload payload.UserUpdatePayload) error {
 	}
 
 	err = s.userRepository.UpdateUser(payload.Id, mapData)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s Service) ChangePassword(userId int, payload payload.UserChangePassword) error {
+	user, err := s.userRepository.FindById(userId)
+	if err != nil {
+		return err
+	}
+
+	if !user.ValidatePassword(payload.OldPassword) {
+		return entity.ErrInvalidPassword
+	}
+
+	hashPassword, err := bcrypt.GenerateFromPassword([]byte(payload.NewPassword), 10)
+	if err != nil {
+		return err
+	}
+
+	err = s.userRepository.ChangePassword(userId, string(hashPassword))
 	if err != nil {
 		return err
 	}
