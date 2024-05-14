@@ -219,3 +219,43 @@ func updateUser(ctx *gin.Context, userService user.UseCase) {
 
 	ctx.JSON(http.StatusOK, response)
 }
+
+func changePassword(ctx *gin.Context, userService user.UseCase) {
+	var payload payload.UserChangePassword
+	err := ctx.ShouldBindJSON(&payload)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	token, err := util.GetToken(ctx)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	claims, err := util.ParseAccessToken(token)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	trxHandle := ctx.MustGet("db_trx").(*gorm.DB)
+	err = userService.WithTrx(trxHandle).ChangePassword(claims.UserId, payload)
+	if err != nil {
+		switch err {
+		case entity.ErrInvalidPassword:
+			util.HandleException(ctx, http.StatusBadRequest, err)
+			return
+		default:
+			util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		}
+	}
+
+	response := presenter.BasicResponse {
+		Status: fmt.Sprint(http.StatusOK),
+		Message: ginI18n.MustGetMessage(config.SUCCESS),
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}

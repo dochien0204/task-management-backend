@@ -15,3 +15,8 @@ type UserUpdatePayload struct {
 	Address string `json:"address"`
 	Email string `json:"email"`
 }
+
+type UserChangePassword struct {
+	OldPassword string `json:"oldPassword"`
+	NewPassword string `json:"newPassword"`
+}

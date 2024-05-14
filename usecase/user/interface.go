@@ -1,6 +1,7 @@
 package user
 
 import (
+	payload "source-base-go/api/payload/user"
 	"source-base-go/entity"
 	"source-base-go/infrastructure/repository"
 
@@ -25,6 +26,7 @@ type UserRepository interface {
 	DeleteUserById(id []int) error
 	UpdateUser(userId int, mapData map[string]interface{}) error
 	FindById(id int ) (*entity.User, error)
+	ChangePassword(userId int , password string) error
 }
 
 type RoleRepository interface {
@@ -57,4 +59,5 @@ type UseCase interface {
 	GetListUser(page, size int, sortType, sortBy string) ([]*entity.User, int, error)
 	UpdateAvatar(userId int, avatar string) error
 	DeleteUserById(id []int) error
+	ChangePassword(userId int, payload payload.UserChangePassword) error
 }
