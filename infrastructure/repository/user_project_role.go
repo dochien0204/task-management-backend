@@ -102,3 +102,16 @@ func (r UserProjectRoleRepository) GetRoleUserInProject(projectId, userId int) (
 
 	return result, nil
 }
+
+func (r UserProjectRoleRepository) GetAllProjectOfUser(userId int) ([]*entity.UserProjectRole, error) {
+	listUserProjectRole := []*entity.UserProjectRole{}
+	err := r.db.Model(&entity.UserProjectRole{}).
+		Where("user_id = ?", userId).
+		Find(&listUserProjectRole).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return listUserProjectRole, nil
+}

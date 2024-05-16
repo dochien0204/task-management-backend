@@ -10,6 +10,7 @@ import (
 	"source-base-go/infrastructure/repository/util"
 	"source-base-go/usecase/task"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-contrib/i18n"
@@ -376,6 +377,46 @@ func deleteTask(ctx *gin.Context, taskService task.UseCase) {
 	response := presenter.BasicResponse {
 		Status: fmt.Sprint(http.StatusOK),
 		Message: i18n.MustGetMessage(config.SUCCESS),
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
+
+func FindListTaskKeyword(ctx *gin.Context, taskService task.UseCase) {
+	page := util.GetPage(ctx, "page")
+	pageSize := util.GetPageSize(ctx, "size")
+	sortBy := ctx.Query("sortBy")
+	sortType := ctx.Query("sortType")
+	keyword := ctx.Query("keyword")
+
+	token ,err := util.GetToken(ctx)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	claims ,err := util.ParseAccessToken(token)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	listTask, count, err := taskService.GetListTaskByUser(claims.UserId, strings.ToLower(keyword), page, pageSize, sortBy, sortType)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	response := presenter.PaginationResponse {
+		Status: fmt.Sprint(http.StatusOK),
+		Message: i18n.MustGetMessage(config.SUCCESS),
+		Results: listTask,
+		Pagination: presenter.Pagination{
+			Count: count,
+			NumPages: int(util.CalculateTotalPages(count, pageSize)),
+			DisplayRecord: len(listTask),
+			Page: page,
+		},
 	}
 
 	ctx.JSON(http.StatusOK, response)
