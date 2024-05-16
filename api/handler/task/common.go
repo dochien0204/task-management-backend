@@ -74,17 +74,17 @@ func convertTaskDetailEntityToPresenter(task *entity.Task) presenter.TaskDetail 
 
 	if task.Assignee != nil {
 		taskPresenter.Assignee = &presenter.User{
-			Id: task.User.Id,
-			Username: task.User.Username,
-			Name: task.User.Name,
+			Id: task.Assignee.Id,
+			Username: task.Assignee.Username,
+			Name: task.Assignee.Name,
 		}
 	}
 
 	if task.Reviewer != nil {
 		taskPresenter.Reviewer = &presenter.User{
-			Id: task.User.Id,
-			Username: task.User.Username,
-			Name: task.User.Name,
+			Id: task.Reviewer.Id,
+			Username: task.Reviewer.Username,
+			Name: task.Reviewer.Name,
 		}
 	}
 
