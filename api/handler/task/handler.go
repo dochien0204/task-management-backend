@@ -53,5 +53,8 @@ func MakeHandlers(app *gin.Engine, taskService task.UseCase, verifier util.Verif
 		taskGroup.DELETE("/delete", tx.DBTransactionMiddleware(), func(ctx *gin.Context) {
 			deleteTask(ctx, taskService)
 		})
+		taskGroup.GET("/search", middleware.JWTVerifyMiddleware(verifier), func(ctx *gin.Context) {
+			FindListTaskKeyword(ctx, taskService)
+		})
 	}
 }

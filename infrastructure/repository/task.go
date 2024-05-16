@@ -217,7 +217,7 @@ func (r TaskRepository) GetListTaskProjectByUser(projectId int, assigneeId, page
 	offset := util.CalculateOffset(page, size)
 	if sortType == "" && sortBy == "" {
 		sortType = "DESC"
-		sortBy = "project.created_at"
+		sortBy = "task.created_at"
 	}
 	if sortType == "" {
 		sortType = "DESC"
@@ -279,4 +279,72 @@ func (r TaskRepository) DeleteTask(taskId int) error {
 	}
 
 	return nil
+}
+
+func (r TaskRepository) GetListTaskByUser(listProjectId []int, keyword string, page, size int, sortBy, sortType string) ([]*entity.Task, error) {
+	listTask := []*entity.Task{}
+	offset := util.CalculateOffset(page, size)
+	if sortType == "" && sortBy == "" {
+		sortType = "DESC"
+		sortBy = "task.created_at"
+	}
+	if sortType == "" {
+		sortType = "DESC"
+	}
+
+	switch sortBy {
+	case "createdAt":
+		sortBy = "task.created_at"
+
+	case "updatedAt":
+		sortBy = "task.updated_at"
+
+	default:
+		sortBy = "task.created_at"
+	}
+
+	chain := r.db.Model(&entity.Task{}).
+		Preload("User").
+		Preload("Status").
+		Preload("Assignee").
+		Preload("Category").
+		Preload("Reviewer").
+		Where("project_id in (?)", listProjectId)
+
+	if keyword != "" {
+		chain = chain.Where("LOWER(task.name) LIKE ?", "%"+keyword+"%").
+			Or("LOWER(task.description) LIKE ?", "%"+keyword+"%")
+	}
+
+	err := chain.
+		Offset(offset).
+		Limit(size).
+		Order(fmt.Sprintf("%v %v", sortBy, sortType)).
+		Find(&listTask).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return listTask, nil
+}
+
+func (r TaskRepository) CountListTaskByUser(listProjectId []int, keyword string) (int, error) {
+	var count int64
+	chain := r.db.Model(&entity.Task{}).
+		Where("project_id in (?)", listProjectId)
+
+	if keyword != "" {
+		chain = chain.Where("LOWER(task.name) LIKE ?", "%"+keyword+"%").
+			Or("LOWER(task.description) LIKE ?", "%"+keyword+"%")
+	}
+
+	err := chain.
+		Count(&count).Error
+
+	if err != nil {
+		return 0, err
+	}
+
+	return int(count), nil
 }

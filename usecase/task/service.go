@@ -291,3 +291,30 @@ func (s Service) DeleteTask(userId, taskId int) error {
 
 	return nil
 }
+
+func (s Service) GetListTaskByUser(userId int, keyword string, page, size int, sortBy, sortType string) ([]*entity.Task, int, error) {
+	//Get list project user join
+	listUserProjectRole, err := s.userProjectRoleRepo.GetAllProjectOfUser(userId)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	listProjectId := []int{}
+	for _, userProjectRole := range listUserProjectRole {
+		listProjectId = append(listProjectId, userProjectRole.ProjectId)
+	}
+
+	//Find list task by list project id
+	listTask, err := s.taskRepo.GetListTaskByUser(listProjectId, keyword, page, size, sortBy, sortType)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	//Count
+	count, err := s.taskRepo.CountListTaskByUser(listProjectId, keyword)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return listTask, count, nil
+}
