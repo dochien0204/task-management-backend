@@ -75,7 +75,7 @@ func (s Service) CreateTask(userId int, payload taskPayload.TaskPayload) (int, e
 	}
 
 	//Create task document
-	if payload.Documents != nil {
+	if len(payload.Documents) > 0 {
 		listTaskDocument := []*entity.TaskDocument{}
 		for _, documentPayload := range payload.Documents {
 			document := &entity.TaskDocument{
@@ -184,6 +184,12 @@ func (s Service) UpdateTask(data taskPayload.TaskUpdatePayload) error {
 
 	//Create task document
 	listTaskDocument := []*entity.TaskDocument{}
+	//Delete all task of document
+	err = s.taskDocumentRepo.DeleteAllTaskDocumentOfTask(data.Id)
+	if err != nil {
+		return err
+	}
+
 	for _, documentPayload := range data.Documents {
 		document := &entity.TaskDocument{
 			File: documentPayload.File,
@@ -194,15 +200,11 @@ func (s Service) UpdateTask(data taskPayload.TaskUpdatePayload) error {
 		listTaskDocument = append(listTaskDocument, document)
 	}
 
-	//Delete all task of document
-	err = s.taskDocumentRepo.DeleteAllTaskDocumentOfTask(data.Id)
-	if err != nil {
-		return err
-	}
-
-	err = s.taskDocumentRepo.CreateDocumentsForTask(listTaskDocument)
-	if err != nil {
-		return err
+	if len(data.Documents) > 0 {
+		err = s.taskDocumentRepo.CreateDocumentsForTask(listTaskDocument)
+		if err != nil {
+			return err
+		}
 	}
 	
 	return nil
