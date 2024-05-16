@@ -410,7 +410,7 @@ func FindListTaskKeyword(ctx *gin.Context, taskService task.UseCase) {
 	response := presenter.PaginationResponse {
 		Status: fmt.Sprint(http.StatusOK),
 		Message: i18n.MustGetMessage(config.SUCCESS),
-		Results: listTask,
+		Results: convertListTaskProjectByUserAndStatusToPresenter(listTask),
 		Pagination: presenter.Pagination{
 			Count: count,
 			NumPages: int(util.CalculateTotalPages(count, pageSize)),
