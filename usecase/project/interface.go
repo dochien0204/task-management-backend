@@ -62,4 +62,5 @@ type UseCase interface {
 	UpdateProject(payload payload.ProjectUpdatePayload) error
 	GetAllProject(keyword string, page, size int, sortType, sortBy string) ([]*entity.Project, int, error)
 	DeleteProjectByListId(listId []int) error
+	AddListMemberWithRoleToProject(listUserRole payload.ListUserWithRole, userId int) error
 }

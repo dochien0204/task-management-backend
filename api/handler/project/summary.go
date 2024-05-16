@@ -373,3 +373,44 @@ func deleteProject(ctx *gin.Context, projectService project.UseCase) {
 
 	ctx.JSON(http.StatusOK, response)
 }
+
+func addListMemberWithRoleToProject(ctx *gin.Context, projectService project.UseCase) {
+	//Get URL param
+	var payload projectPayload.ListUserWithRole
+	err := ctx.ShouldBindJSON(&payload)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	token, err := util.GetToken(ctx)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	claims, err := util.ParseAccessToken(token)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	trxHandle := ctx.MustGet("db_trx").(*gorm.DB)
+	err = projectService.WithTrx(trxHandle).AddListMemberWithRoleToProject(payload, claims.UserId)
+	if err != nil {
+		switch err {
+		case entity.ErrForbidden:
+			util.HandleException(ctx, http.StatusForbidden, err)
+			return
+		default:
+			util.HandleException(ctx, http.StatusBadRequest, err)
+			return
+		}
+	}
+
+	response := presenter.BasicResponse{
+		Status:  fmt.Sprint(http.StatusOK),
+		Message: ginI18n.MustGetMessage(config.SUCCESS),
+	}
+	ctx.JSON(http.StatusOK, response)
+}
