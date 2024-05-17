@@ -10,6 +10,7 @@ func convertListRoleEntityToPresenter(listData []*entity.Role) []*rolePresenter.
 	listRolePresenter := []*rolePresenter.Role{}
 	for _, role := range listData {
 		rolePresenter := &rolePresenter.Role{
+			Id: role.Id,
 			Name:        role.Name,
 			Code:        role.Code,
 			Description: role.Description,
