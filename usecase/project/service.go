@@ -146,6 +146,25 @@ func (s Service) GetListMemberByProject(projectId int, page, size int, keyword, 
 		return nil, 0, err
 	}
 
+	listMemberId := []int{}
+	mapUserRole := map[int]*entity.Role{}
+	for _, member := range listMember {
+		listMemberId = append(listMemberId, member.User.Id)
+	}
+
+	listUserProjectRole, err := s.userProjectRoleRepo.GetListRoleListUserInProject(projectId, listMemberId)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	for _, userRole := range listUserProjectRole {
+		mapUserRole[userRole.UserId] = userRole.Role
+	}
+
+	for _, member := range listMember {
+		member.User.Role = []*entity.Role{mapUserRole[member.User.Id]}
+	}
+
 	count, err := s.projectRepo.CountListMemberByProject(projectId, keyword)
 	if err != nil {
 		return nil, 0, err
