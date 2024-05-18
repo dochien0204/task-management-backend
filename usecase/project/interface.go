@@ -34,6 +34,7 @@ type UserProjectRoleRepository interface {
 	GetProjectOwner(projectId, roleId int) (*entity.UserProjectRole, error)
 	GetProjectDetailWithOwner(projectId, roleId int) (*entity.UserProjectRole, error)
 	GetRoleUserInProject(projectId, userId int) (*entity.UserProjectRole, error)
+	GetListRoleListUserInProject(projectId int, userId []int) ([]*entity.UserProjectRole, error)
 }
 
 type RoleRepository interface {

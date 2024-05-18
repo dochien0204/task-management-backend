@@ -6,6 +6,7 @@ import (
 	projectPresenter "source-base-go/api/presenter/project"
 	"source-base-go/config"
 	"source-base-go/entity"
+	"source-base-go/infrastructure/repository/define"
 )
 
 func convertProjectPayloadToEntity(payload projectPayload.ProjectPayload) *entity.Project {
@@ -65,6 +66,18 @@ func convertListMemberTaskCountToPresenter(listMember []*entity.UserTaskCount) [
 			TaskCount: member.TaskCount,
 		}
 
+		for _, role := range member.User.Role {
+			if role.Type == string(define.PROJECT) {
+				userPresenter.User.Role = &presenter.Role{
+					Id: role.Id,
+					Code: role.Code,
+					Name: role.Name,
+					Type: role.Type,
+				}
+
+				break
+			}
+		}
 		listPresenter = append(listPresenter, userPresenter)
 	}
 
