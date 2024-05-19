@@ -184,6 +184,7 @@ func (r ProjectRepository) CountListTaskOpenUser(projectId, userId, statusId int
 		Where("t.project_id = ?", projectId).
 		Where("t.assignee_id = ?", userId).
 		Where("t.status_id != ?", statusId).
+		Group(`"user".id`).
 		Scan(&userTaskCount).Error
 
 	if err != nil {

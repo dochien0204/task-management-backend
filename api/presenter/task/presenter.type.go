@@ -10,6 +10,7 @@ type Task struct {
 	Name string `json:"name"`
 	Description string `json:"description"`
 	Category *Category `json:"category"`
+	Assignee *UserPresenter `json:"assignee"`
 }
 
 type Category struct {

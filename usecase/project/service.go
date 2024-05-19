@@ -313,7 +313,7 @@ func (s Service) GetProjectChartView(userId int) (map[entity.Project]int, map[en
 
 
 	//Get task done of project
-	projectDoneTask, err := s.projectRepo.GetTaskOfProjectNotInStatus(listProjectId, []int{1,2})
+	projectDoneTask, err := s.projectRepo.GetTaskOfProjectNotInStatus(listProjectId, []int{6})
 	if err != nil {
 		return nil, nil, nil, err
 	}
