@@ -66,7 +66,7 @@ func (r ProjectRepository) GetListProjectOfUser(userId, statusId, page, size int
 		Distinct().
 		Select("project.id", "project.name", "project.description", "project.image", "project.created_at", "project.updated_at").
 		Joins("join user_project_role upr on upr.project_id = project.id").
-		Where("project.user_id = ?", userId).
+		Where("upr.user_id = ?", userId).
 		Where("project.status_id = ?", statusId).
 		Offset(offset).
 		Limit(size).
