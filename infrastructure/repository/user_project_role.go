@@ -130,3 +130,18 @@ func (r UserProjectRoleRepository) GetListRoleListUserInProject(projectId int, u
 
 	return result, nil
 }
+
+func (r UserProjectRoleRepository) GetListProjectIdOfUser(userId int) ([]int, error) {
+	listProjectId := []int{}
+	err := r.db.Model(&entity.UserProjectRole{}).
+		Select("user_project_role.project_id").
+		Distinct().
+		Where("user_id = ?", userId).
+		Find(&listProjectId).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return listProjectId, nil
+}

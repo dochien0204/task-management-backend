@@ -175,3 +175,26 @@ func convertListProjectEntityAdminToPresenter(listData []*entity.Project) []*pro
 
 	return listProjectPresenter
 }
+
+func converProjectChartViewToPresenter(mapProjectTotalTask map[entity.Project]int, mapProjectDoneTask map[entity.Project]int, mapProjectMemberCount map[entity.Project]int) []*presenter.ProjectChartOverview {
+	listPresenter := []*presenter.ProjectChartOverview{}
+	for project := range mapProjectTotalTask {
+		presenter := &projectPresenter.ProjectChartOverview{
+			Project: &projectPresenter.ProjectPresenter{
+				Id: project.Id,
+				Name: project.Name,
+				Description: project.Description,
+				Image: project.Image,
+				CreatedAt: project.CreatedAt.Format(config.LAYOUT),
+				UpdatedAt: project.UpdatedAt.Format(config.LAYOUT),
+			},
+			TotalTask: mapProjectTotalTask[project],
+			DoneTask: mapProjectDoneTask[project],
+			MemberCount: mapProjectMemberCount[project],
+		}
+
+		listPresenter = append(listPresenter, presenter)
+	}
+
+	return listPresenter
+}

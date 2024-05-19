@@ -180,11 +180,10 @@ func (r ProjectRepository) CountListTaskOpenUser(projectId, userId, statusId int
 	userTaskCount := &entity.UserTaskCount{}
 	err := r.db.Model(&entity.User{}).
 		Select(`"user".*, COUNT(t.id) as task_count`).
-		Joins(`join task t on t.assignee_id = "user".id`).
+		Joins(`join task t on t.assignee_id = "user".id and t.deleted_at is null`).
 		Where("t.project_id = ?", projectId).
 		Where("t.assignee_id = ?", userId).
 		Where("t.status_id != ?", statusId).
-		Group(`"user".id`).
 		Scan(&userTaskCount).Error
 
 	if err != nil {
@@ -288,4 +287,52 @@ func (r ProjectRepository) DeleteProject(listId []int) error {
 	}
 
 	return nil
+}
+
+func (r ProjectRepository) GetTaskOfProjectNotInStatus(projectId, statusId []int) ([]*entity.ProjectTaskCount, error) {
+	projectTaskCount := []*entity.ProjectTaskCount{}
+	err := r.db.Model(&entity.Project{}).
+		Select("project.*, COUNT(t.id) as task_count").
+		Joins("left join task t on t.project_id = project.id AND t.status_id NOT IN (?)", statusId).
+		Where("project.id IN (?)", projectId).
+		Group("project.id").
+		Find(&projectTaskCount).Error
+
+	if err != nil {
+		return nil , err
+	}
+
+	return projectTaskCount, nil
+}
+
+func (r ProjectRepository) GetTotalTaskOfProject(projectId []int) ([]*entity.ProjectTaskCount, error) {
+	projectTaskCount := []*entity.ProjectTaskCount{}
+	err := r.db.Model(&entity.Project{}).
+		Select("project.*, COUNT(t.id) as task_count").
+		Joins("left join task t on t.project_id = project.id").
+		Where("project.id IN (?)", projectId).
+		Group("project.id").
+		Find(&projectTaskCount).Error
+
+	if err != nil {
+		return nil , err
+	}
+
+	return projectTaskCount, nil
+}
+
+func (r ProjectRepository) GetListProjectMember(listProjectId []int) ([]*entity.ProjectMemberCount, error) {
+	projectMemberCount := []*entity.ProjectMemberCount{}
+	err := r.db.Model(&entity.Project{}).
+		Select("project.*, COUNT(DISTINCT(upr.user_id)) as member_count").
+		Joins("left join user_project_role upr on upr.project_id = project.id").
+		Where("project.id IN (?)", listProjectId).
+		Group("project.id").
+		Find(&projectMemberCount).Error
+
+	if err != nil {
+		return nil , err
+	}
+
+	return projectMemberCount, nil
 }

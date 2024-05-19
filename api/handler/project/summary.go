@@ -414,3 +414,31 @@ func addListMemberWithRoleToProject(ctx *gin.Context, projectService project.Use
 	}
 	ctx.JSON(http.StatusOK, response)
 }
+
+func getProjectOverview(ctx *gin.Context, projectService project.UseCase) {
+	token, err := util.GetToken(ctx)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	claims, err := util.ParseAccessToken(token)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	projectTotalTask, projectDoneTask, projectMemberCount, err := projectService.GetProjectChartView(claims.UserId)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	response := presenter.BasicResponse {
+		Status: fmt.Sprint(http.StatusOK),
+		Message: i18n.MustGetMessage(config.SUCCESS),
+		Results: converProjectChartViewToPresenter(projectTotalTask, projectDoneTask, projectMemberCount),
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}

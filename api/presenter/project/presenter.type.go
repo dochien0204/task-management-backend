@@ -85,3 +85,10 @@ type Status struct {
 	Type        string `json:"type"`
 	Description string `json:"description"`
 }
+
+type ProjectChartOverview struct {
+	Project *ProjectPresenter `json:"project"`
+	TotalTask int `json:"totalTask"`
+	DoneTask int `json:"doneTask"`
+	MemberCount int `json:"memberCount"`
+}
