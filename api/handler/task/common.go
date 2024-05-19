@@ -28,6 +28,12 @@ func convertListTaskToPresenter(listTask []*entity.Task, listStatus []*entity.St
 			Id: task.Id,
 			Name: task.Name,
 			Description: task.Description,
+			Assignee: &presenter.UserPresenter{
+				Id: task.Assignee.Id,
+				Username: task.Assignee.Username,
+				Name: task.Assignee.Name,
+				Email: task.Assignee.Email,
+			},
 		}
 
 		if (task.Category != nil) {
