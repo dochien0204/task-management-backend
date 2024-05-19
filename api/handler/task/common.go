@@ -33,6 +33,7 @@ func convertListTaskToPresenter(listTask []*entity.Task, listStatus []*entity.St
 				Username: task.Assignee.Username,
 				Name: task.Assignee.Name,
 				Email: task.Assignee.Email,
+				Avatar: task.Assignee.Avatar,
 			},
 		}
 
