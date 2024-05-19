@@ -24,6 +24,9 @@ type ProjectRepository interface {
 	GetAllProject(keyword string, page, size int, sortType, sortBy string) ([]*entity.Project, error)
 	CountAllProject(keyword string) (int, error)
 	DeleteProject(listId []int) error
+	GetTaskOfProjectNotInStatus(projectId, statusId []int) ([]*entity.ProjectTaskCount, error)
+	GetTotalTaskOfProject(projectId []int) ([]*entity.ProjectTaskCount, error)
+	GetListProjectMember(listProjectId []int) ([]*entity.ProjectMemberCount, error)
 }
 
 type UserProjectRoleRepository interface {
@@ -35,6 +38,7 @@ type UserProjectRoleRepository interface {
 	GetProjectDetailWithOwner(projectId, roleId int) (*entity.UserProjectRole, error)
 	GetRoleUserInProject(projectId, userId int) (*entity.UserProjectRole, error)
 	GetListRoleListUserInProject(projectId int, userId []int) ([]*entity.UserProjectRole, error)
+	GetListProjectIdOfUser(userId int) ([]int, error)
 }
 
 type RoleRepository interface {
@@ -64,4 +68,5 @@ type UseCase interface {
 	GetAllProject(keyword string, page, size int, sortType, sortBy string) ([]*entity.Project, int, error)
 	DeleteProjectByListId(listId []int) error
 	AddListMemberWithRoleToProject(listUserRole payload.ListUserWithRole, userId int) error
+	GetProjectChartView(userId int) (map[entity.Project]int, map[entity.Project]int, map[entity.Project]int, error)
 }

@@ -292,3 +292,47 @@ func (s Service) AddListMemberWithRoleToProject(listUserRole payload.ListUserWit
 
 	return nil
 }
+
+func (s Service) GetProjectChartView(userId int) (map[entity.Project]int, map[entity.Project]int, map[entity.Project]int, error) {
+	//Get list project user join
+	listProjectId, err := s.userProjectRoleRepo.GetListProjectIdOfUser(userId)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	//Get total task of project
+	mapProjectTotalTask := map[entity.Project]int{}
+	projectTotalTask, err := s.projectRepo.GetTotalTaskOfProject(listProjectId)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	for _, projectCount := range projectTotalTask {
+		mapProjectTotalTask[projectCount.Project] = projectCount.TaskCount
+	}
+
+
+	//Get task done of project
+	projectDoneTask, err := s.projectRepo.GetTaskOfProjectNotInStatus(listProjectId, []int{1,2})
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	mapProjectDoneTask := map[entity.Project]int{}
+	for _, projectCount := range projectDoneTask {
+		mapProjectDoneTask[projectCount.Project] = projectCount.TaskCount
+	}
+
+	//Get project member count
+	projectMemberCount, err := s.projectRepo.GetListProjectMember(listProjectId)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	mapProjectMemberCount := map[entity.Project]int{}
+	for _, projectCount := range projectMemberCount {
+		mapProjectMemberCount[projectCount.Project] = projectCount.MemberCount
+	}
+
+	return mapProjectTotalTask, mapProjectDoneTask, mapProjectMemberCount, nil
+}

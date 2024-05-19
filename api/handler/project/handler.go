@@ -58,5 +58,9 @@ func MakeHandlers(app *gin.Engine, projectService project.UseCase, verifier util
 		projectGroup.POST("/add-member", middleware.JWTVerifyMiddleware(verifier), tx.DBTransactionMiddleware(), func(ctx *gin.Context) {
 			addListMemberWithRoleToProject(ctx, projectService)
 		})
+
+		projectGroup.GET("/chart/overview", func(ctx *gin.Context) {
+			getProjectOverview(ctx, projectService)
+		})
 	}
 }

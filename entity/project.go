@@ -20,3 +20,13 @@ type Project struct {
 	UpdatedAt time.Time
 	DeleteAt gorm.DeletedAt `gorm:"index;column:deleted_at"`
 }
+
+type ProjectTaskCount struct {
+	Project Project `gorm:"embedded"`
+	TaskCount int `gorm:"column:task_count"`
+}
+
+type ProjectMemberCount struct {
+	Project Project `gorm:"embedded"`
+	MemberCount int `gorm:"column:member_count"`
+}
