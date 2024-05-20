@@ -40,6 +40,7 @@ type TaskDetail struct {
 	StartDate string `json:"startDate"`
 	Status *Status `json:"status"`
 	DueDate string `json:"dueDate"`
+	ProjectId int `json:"projectId"`
 	CreatedAt string `json:"createdAt"`
 	UpdatedAt string `json:"updatedAt"`
 }

@@ -241,6 +241,7 @@ func convertListTaskProjectByUserAndStatusToPresenter(listTask []*entity.Task) [
 			Code: task.Status.Code,
 			Type: task.Status.Type,
 		},
+		ProjectId: task.ProjectId,
 		StartDate: task.StartDate.Format(config.LAYOUT),
 		DueDate: task.DueDate.Format(config.LAYOUT),
 		CreatedAt: task.CreatedAt.Format(config.LAYOUT),
