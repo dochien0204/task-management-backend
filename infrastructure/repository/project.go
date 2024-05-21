@@ -119,8 +119,8 @@ func (r ProjectRepository) GetListMemberByProject(projectId int, page, size int,
 		Joins(`left join task t on t.project_id = p.id and t.assignee_id = u.id AND t.deleted_at is NULL`)
 		
 	if keyword != "" {
-		chain = chain.Where(`"user".username LIKE ?`, "%"+keyword+"%").
-			Or(`"user".name LIKE ?`, "%"+keyword+"%")
+		chain = chain.Where(`u.username LIKE ?`, "%"+keyword+"%").
+			Or(`u.name LIKE ?`, "%"+keyword+"%")
 	}
 	
 	err := chain.Group(`u.id`).
