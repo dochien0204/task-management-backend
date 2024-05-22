@@ -136,6 +136,7 @@ func (r UserProjectRoleRepository) GetListProjectIdOfUser(userId int) ([]int, er
 	err := r.db.Model(&entity.UserProjectRole{}).
 		Select("user_project_role.project_id").
 		Distinct().
+		Joins("join project p on p.id = user_project_role.project_id AND p.deleted_at is NULL").
 		Where("user_id = ?", userId).
 		Find(&listProjectId).Error
 
