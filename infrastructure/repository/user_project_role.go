@@ -137,7 +137,7 @@ func (r UserProjectRoleRepository) GetListProjectIdOfUser(userId int) ([]int, er
 		Select("user_project_role.project_id").
 		Distinct().
 		Joins("join project p on p.id = user_project_role.project_id AND p.deleted_at is NULL").
-		Where("user_id = ?", userId).
+		Where("user_project_role.user_id = ?", userId).
 		Find(&listProjectId).Error
 
 	if err != nil {
