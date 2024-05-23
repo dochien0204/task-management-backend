@@ -43,7 +43,7 @@ func (r ActivityRepository) CreateActivity(data *entity.Activity) error {
 func (r ActivityRepository) GetListActivityByDate(projectId int, timeOffset int, fromDate time.Time, toDate time.Time) ([]*entity.Activity, error) {
 	listActivity := []*entity.Activity{}
 	chain := r.db.Model(&entity.Activity{}).
-		Joins("join task t on t.id = activity.task_id").
+		Joins("join task t on t.id = activity.task_id AND t.deleted_at is NULL").
 		Where("t.project_id = ?", projectId)
 
 	if !fromDate.IsZero() {
@@ -69,7 +69,7 @@ func (r ActivityRepository) GetListActivityByDate(projectId int, timeOffset int,
 func (r ActivityRepository) GetListActivityByDateOfUser(projectId, userId int, timeOffset int, fromDate time.Time, toDate time.Time) ([]*entity.Activity, error) {
 	listActivity := []*entity.Activity{}
 	chain := r.db.Model(&entity.Activity{}).
-		Joins("join task t on t.id = activity.task_id").
+		Joins("join task t on t.id = activity.task_id AND t.deleted_at is NULL").
 		Where("t.project_id = ?", projectId).
 		Where("activity.user_id = ?", userId)
 
