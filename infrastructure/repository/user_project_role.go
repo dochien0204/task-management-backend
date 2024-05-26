@@ -77,7 +77,7 @@ func (r UserProjectRoleRepository) FindAllUserOfProject(projectId int) ([]*entit
 	listUser := []*entity.User{}
 	err := r.db.Model(&entity.UserProjectRole{}).
 		Select("u.*").
-		Joins(`join "user" u on u.id = user_project_role.user_id`).
+		Joins(`join "user" u on u.id = user_project_role.user_id and u.deleted_at is null`).
 		Where("user_project_role.project_id = ?", projectId).
 		Find(&listUser).Error
 

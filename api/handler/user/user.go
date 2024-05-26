@@ -282,3 +282,31 @@ func resetPassword(ctx *gin.Context, userService user.UseCase) {
 
 	ctx.JSON(http.StatusOK, response)
 }
+
+func getListUserOfProject(ctx *gin.Context, userService user.UseCase) {
+	page := util.GetPage(ctx, "page")
+	pageSize := util.GetPageSize(ctx, "size")
+	sortBy := ctx.Query("sortBy")
+	sortType := ctx.Query("sortType")
+	projectId := ctx.Query("projectId")
+	projectIdInt, _ := strconv.Atoi(projectId)
+	listUser, count, err := userService.GetListUserOfProject(projectIdInt, page, pageSize, sortType, sortBy)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	response := presenter.PaginationResponse {
+		Status: fmt.Sprint(http.StatusOK),
+		Message: ginI18n.MustGetMessage(config.SUCCESS),
+		Results: convertListUserToPresenter(listUser),
+		Pagination: presenter.Pagination {
+			Count: count,
+			NumPages: int(util.CalculateTotalPages(count, pageSize)),
+			DisplayRecord: len(listUser),
+			Page: page,
+		},
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
