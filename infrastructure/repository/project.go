@@ -197,7 +197,7 @@ func (r ProjectRepository) CountListTaskByStatus(projectId, userId, statusId int
 	userTaskCount := &entity.UserTaskCount{}
 	err := r.db.Model(&entity.User{}).
 		Select(`"user".*, COUNT(t.id) as task_count`).
-		Joins(`join task t on t.assignee_id = "user".id`).
+		Joins(`join task t on t.assignee_id = "user".id and t.deleted_at is null`).
 		Where("t.project_id = ?", projectId).
 		Where("t.assignee_id = ?", userId).
 		Where("t.status_id = ?", statusId).
