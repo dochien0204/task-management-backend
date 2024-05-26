@@ -3,6 +3,7 @@ package task
 import (
 	"fmt"
 	taskPayload "source-base-go/api/payload/task"
+	presenter "source-base-go/api/presenter/task"
 	"source-base-go/config"
 	"source-base-go/entity"
 	"source-base-go/infrastructure/repository/define"
@@ -446,3 +447,34 @@ func (s Service) GetListTaskByUser(userId int, keyword string, page, size int, s
 
 	return listTask, count, nil
 }
+
+func (s Service) GetOverviewCard(userId int) (*presenter.DashboardCardOverview, error) {
+	totalProject, err := s.projectRepo.CountProductOfUser(userId, 7)
+	if err != nil {
+		return nil, err
+	}
+
+	totalTaskRest, err := s.taskRepo.CountListRestTaskOfUser(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	taskOpenToday, err := s.taskRepo.CountListRestTaskOfUser(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	taskClosedToday, err := s.taskRepo.CountListRestTaskOfUser(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	result := &presenter.DashboardCardOverview{
+		TotalProject: totalProject,
+		TotalTaskRest: totalTaskRest,
+		TaskOpenToday: taskOpenToday,
+		TaskClosedToday: taskClosedToday,
+	}
+
+	return result, nil
+} 

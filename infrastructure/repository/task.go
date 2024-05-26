@@ -347,3 +347,18 @@ func (r TaskRepository) CountListTaskByUser(listProjectId []int, keyword string)
 
 	return int(count), nil
 }
+
+func (r TaskRepository) CountListRestTaskOfUser(userId int) (int, error) {
+	var count int64
+	err := r.db.Model(&entity.Task{}).
+		Joins("join project p on p.id = task.project_id AND p.deleted_at is null").
+		Where("assignee_id = ?", userId).
+		Where("p.status_id = ?", 7).
+		Count(&count).Error
+
+	if err != nil {
+		return 0, err
+	}
+
+	return int(count), nil
+}

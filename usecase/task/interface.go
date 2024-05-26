@@ -2,6 +2,7 @@ package task
 
 import (
 	taskPayload "source-base-go/api/payload/task"
+	presenter "source-base-go/api/presenter/task"
 	"source-base-go/entity"
 	"source-base-go/infrastructure/repository"
 	"time"
@@ -25,6 +26,7 @@ type TaskRepository interface {
 	DeleteTask(taskId int) error
 	GetListTaskByUser(listProjectId []int, keyword string, page, size int, sortBy, sortType string) ([]*entity.Task, error)
 	CountListTaskByUser(listProjectId []int, keyword string) (int, error)
+	CountListRestTaskOfUser(userId int) (int, error)
 }
 
 type StatusRepository interface {
@@ -60,6 +62,7 @@ type UserRepository interface {
 
 type ProjectRepository interface {
 	FindById(id int ) (*entity.Project, error)
+	CountProductOfUser(userId, statusId int) (int, error)
 }
 
 type UserProjectRoleRepository interface {
@@ -86,4 +89,5 @@ type UseCase interface {
 	GetListTaskProjectByUserAndStatus(projectId int, assigneeId, statusId int, page, size int, sortType, sortBy string) ([]*entity.Task, int, error)
 	DeleteTask(userId, taskId int) error
 	GetListTaskByUser(userId int, keyword string, page, size int, sortBy, sortType string) ([]*entity.Task, int, error)
+	GetOverviewCard(userId int) (*presenter.DashboardCardOverview, error)
 }

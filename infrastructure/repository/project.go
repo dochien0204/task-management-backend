@@ -337,3 +337,20 @@ func (r ProjectRepository) GetListProjectMember(listProjectId []int) ([]*entity.
 
 	return projectMemberCount, nil
 }
+
+func (r ProjectRepository) CountProductOfUser(userId, statusId int) (int, error) {
+	listProject := []*entity.Project{}
+	err := r.db.Model(&entity.Project{}).
+		Distinct().
+		Select("project.id", "project.name", "project.description", "project.image", "project.created_at", "project.updated_at").
+		Joins("join user_project_role upr on upr.project_id = project.id").
+		Where("upr.user_id = ?", userId).
+		Where("project.status_id = ?", statusId).
+		Find(&listProject).Error
+
+	if err != nil {
+		return 0, err
+	}
+
+	return len(listProject), nil
+}
