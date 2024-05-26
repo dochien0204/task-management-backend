@@ -89,3 +89,10 @@ type UserPresenter struct {
 type ListTaskByUserAndStatusPresenter struct {
 	ListTask []*TaskDetail `json:"listTask"`
 }
+
+type DashboardCardOverview struct {
+	TotalProject int `json:"totalProject"`
+	TotalTaskRest int `json:"countTaskRest"`
+	TaskOpenToday int `json:"taskOpenToday"`
+	TaskClosedToday int `json:"taskClosedToday"`
+}

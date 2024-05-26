@@ -56,5 +56,9 @@ func MakeHandlers(app *gin.Engine, taskService task.UseCase, verifier util.Verif
 		taskGroup.GET("/search", middleware.JWTVerifyMiddleware(verifier), func(ctx *gin.Context) {
 			FindListTaskKeyword(ctx, taskService)
 		})
+
+		taskGroup.GET("/overview-card", middleware.JWTVerifyMiddleware(verifier), func(ctx *gin.Context) {
+			getDashboardCardOverview(ctx, taskService)
+		})
 	}
 }

@@ -445,3 +445,31 @@ func FindListTaskKeyword(ctx *gin.Context, taskService task.UseCase) {
 
 	ctx.JSON(http.StatusOK, response)
 }
+
+func getDashboardCardOverview(ctx *gin.Context, taskService task.UseCase) {
+	token ,err := util.GetToken(ctx)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	claims ,err := util.ParseAccessToken(token)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	overview, err := taskService.GetOverviewCard(claims.UserId)
+	if err != nil {
+		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
+		return
+	}
+
+	response := presenter.BasicResponse {
+		Status: fmt.Sprint(http.StatusOK),
+		Message: i18n.MustGetMessage(config.SUCCESS),
+		Results: overview,
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
