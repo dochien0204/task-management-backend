@@ -268,3 +268,22 @@ func (s Service) ResetPassword(userId int) error {
 
 	return nil
 }
+
+func (s Service) GetListUserOfProject(projectId, page, size int, sortType, sortBy string) ([]*entity.User, int, error) {
+	statusUserActive, err := s.StatusRepo.GetStatusByCodeAndType(string(define.USER), string(define.ACTIVE))
+	if err != nil {
+		return nil, 0, err
+	}
+
+	listUser, err := s.userRepository.GetListUserByProject(projectId, statusUserActive.Id, page, size, sortType, sortBy)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	count, err := s.userRepository.CountListUserProject(projectId, statusUserActive.Id)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return listUser, count, nil 
+}

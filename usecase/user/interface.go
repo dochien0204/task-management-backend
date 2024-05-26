@@ -27,6 +27,8 @@ type UserRepository interface {
 	UpdateUser(userId int, mapData map[string]interface{}) error
 	FindById(id int ) (*entity.User, error)
 	ChangePassword(userId int , password string) error
+	GetListUserByProject(projectId, statusId, page, size int, sortType, sortBy string) ([]*entity.User, error)
+	CountListUserProject(projectId, statusId int) (int, error)
 }
 
 type RoleRepository interface {
@@ -61,4 +63,5 @@ type UseCase interface {
 	DeleteUserById(id []int) error
 	ChangePassword(userId int, payload payload.UserChangePassword) error
 	ResetPassword(userId int) error
+	GetListUserOfProject(projectId, page, size int, sortType, sortBy string) ([]*entity.User, int, error)
 }

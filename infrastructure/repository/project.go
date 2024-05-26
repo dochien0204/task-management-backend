@@ -114,7 +114,7 @@ func (r ProjectRepository) GetListMemberByProject(projectId int, page, size int,
 		Select(`"u".*, COUNT(DISTINCT t.id) AS task_count`).
 		Preload("Role").
 		Preload("Status").
-		Joins(`left join "user" u on user_project_role.user_id = u.id`).
+		Joins(`join "user" u on user_project_role.user_id = u.id and u.deleted_at is null`).
 		Joins(`join project p on p.id = user_project_role.project_id and p.id = ?`, projectId).
 		Joins(`left join task t on t.project_id = p.id and t.assignee_id = u.id AND t.deleted_at is NULL`)
 		
@@ -293,7 +293,7 @@ func (r ProjectRepository) GetTaskOfProjectNotInStatus(projectId, statusId []int
 	projectTaskCount := []*entity.ProjectTaskCount{}
 	err := r.db.Model(&entity.Project{}).
 		Select("project.*, COUNT(t.id) as task_count").
-		Joins("left join task t on t.project_id = project.id AND t.status_id NOT IN (?)", statusId).
+		Joins("left join task t on t.project_id = project.id AND t.deleted_at is null AND t.status_id IN (?)", statusId).
 		Where("project.id IN (?)", projectId).
 		Group("project.id").
 		Find(&projectTaskCount).Error
@@ -309,7 +309,7 @@ func (r ProjectRepository) GetTotalTaskOfProject(projectId []int) ([]*entity.Pro
 	projectTaskCount := []*entity.ProjectTaskCount{}
 	err := r.db.Model(&entity.Project{}).
 		Select("project.*, COUNT(t.id) as task_count").
-		Joins("left join task t on t.project_id = project.id").
+		Joins("left join task t on t.project_id = project.id AND t.deleted_at is null").
 		Where("project.id IN (?)", projectId).
 		Group("project.id").
 		Find(&projectTaskCount).Error
@@ -326,6 +326,7 @@ func (r ProjectRepository) GetListProjectMember(listProjectId []int) ([]*entity.
 	err := r.db.Model(&entity.Project{}).
 		Select("project.*, COUNT(DISTINCT(upr.user_id)) as member_count").
 		Joins("left join user_project_role upr on upr.project_id = project.id").
+		Joins(`join "user" u on u.id = upr.user_id and u.deleted_at is null`).
 		Where("project.id IN (?)", listProjectId).
 		Group("project.id").
 		Find(&projectMemberCount).Error
