@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"sort"
 	projectPayload "source-base-go/api/payload/project"
 	presenter "source-base-go/api/presenter/project"
 	projectPresenter "source-base-go/api/presenter/project"
@@ -117,6 +118,9 @@ func convertListActivityProjectByDateToPresenter(listActivity []*entity.Activity
 		listPresenter = append(listPresenter, listTaskPresenterDetail)
 	}
 
+	sort.Slice(listPresenter, func(i, j int) bool {
+		return listPresenter[i].Date > listPresenter[j].Date
+	})
 	return listPresenter
 }
 
@@ -195,6 +199,10 @@ func converProjectChartViewToPresenter(mapProjectTotalTask map[entity.Project]in
 
 		listPresenter = append(listPresenter, presenter)
 	}
+
+	sort.Slice(listPresenter, func(i, j int) bool {
+		return listPresenter[i].Project.Name < listPresenter[j].Project.Name
+	})
 
 	return listPresenter
 }

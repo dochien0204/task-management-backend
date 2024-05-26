@@ -119,8 +119,20 @@ func updateTask(ctx *gin.Context, taskService task.UseCase) {
 		return
 	}
 
+	token, err := util.GetToken(ctx)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	claims, err := util.ParseAccessToken(token)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
 	trxHandle := ctx.MustGet("db_trx").(*gorm.DB)
-	err = taskService.WithTrx(trxHandle).UpdateTask(payload)
+	err = taskService.WithTrx(trxHandle).UpdateTask(claims.UserId, payload)
 	if err != nil {
 		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
 		return
@@ -142,8 +154,20 @@ func updateTaskStatus(ctx *gin.Context, taskService task.UseCase) {
 		return
 	}
 
+	token, err := util.GetToken(ctx)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
+	claims, err := util.ParseAccessToken(token)
+	if err != nil {
+		util.HandleException(ctx, http.StatusUnauthorized, entity.ErrUnauthorized)
+		return
+	}
+
 	trxHandle := ctx.MustGet("db_trx").(*gorm.DB)
-	err = taskService.WithTrx(trxHandle).UpdateTaskStatus(payload.Id, payload.StatusId)
+	err = taskService.WithTrx(trxHandle).UpdateTaskStatus(claims.UserId, payload.Id, payload.StatusId)
 	if err != nil {
 		util.HandleException(ctx, http.StatusBadRequest, entity.ErrBadRequest)
 		return
