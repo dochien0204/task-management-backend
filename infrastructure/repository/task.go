@@ -354,6 +354,43 @@ func (r TaskRepository) CountListRestTaskOfUser(userId int) (int, error) {
 		Joins("join project p on p.id = task.project_id AND p.deleted_at is null").
 		Where("assignee_id = ?", userId).
 		Where("p.status_id = ?", 7).
+		Where("task.status_id != ?", 6).
+		Count(&count).Error
+
+	if err != nil {
+		return 0, err
+	}
+
+	return int(count), nil
+}
+
+func (r TaskRepository) CountTaskOpenTodayOfUser(userId int) (int, error) {
+	today := time.Now().Add(7 * time.Hour).Format("2006-01-02")
+	var count int64
+	err := r.db.Model(&entity.Task{}).
+		Joins("join project p on p.id = task.project_id AND p.deleted_at is null").
+		Where("assignee_id = ?", userId).
+		Where("p.status_id = ?", 7).
+		Where("DATE(task.due_date + interval '7 hour') = ?", today).
+		Where("task.status_id IN (?)", []int{3, 4, 5}).
+		Count(&count).Error
+
+	if err != nil {
+		return 0, err
+	}
+
+	return int(count), nil
+}
+
+func (r TaskRepository) CountTaskClosedTodayOfUser(userId int) (int, error) {
+	today := time.Now().Add(7 * time.Hour).Format("2006-01-02")
+	var count int64
+	err := r.db.Model(&entity.Task{}).
+		Joins("join project p on p.id = task.project_id AND p.deleted_at is null").
+		Where("assignee_id = ?", userId).
+		Where("p.status_id = ?", 7).
+		Where("DATE(task.due_date + interval '7 hour') = ?", today).
+		Where("task.status_id = ?", 6).
 		Count(&count).Error
 
 	if err != nil {

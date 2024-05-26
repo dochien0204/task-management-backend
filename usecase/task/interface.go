@@ -27,6 +27,8 @@ type TaskRepository interface {
 	GetListTaskByUser(listProjectId []int, keyword string, page, size int, sortBy, sortType string) ([]*entity.Task, error)
 	CountListTaskByUser(listProjectId []int, keyword string) (int, error)
 	CountListRestTaskOfUser(userId int) (int, error)
+	CountTaskOpenTodayOfUser(userId int) (int, error)
+	CountTaskClosedTodayOfUser(userId int) (int, error)
 }
 
 type StatusRepository interface {

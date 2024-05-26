@@ -459,12 +459,12 @@ func (s Service) GetOverviewCard(userId int) (*presenter.DashboardCardOverview, 
 		return nil, err
 	}
 
-	taskOpenToday, err := s.taskRepo.CountListRestTaskOfUser(userId)
+	taskOpenToday, err := s.taskRepo.CountTaskOpenTodayOfUser(userId)
 	if err != nil {
 		return nil, err
 	}
 
-	taskClosedToday, err := s.taskRepo.CountListRestTaskOfUser(userId)
+	taskClosedToday, err := s.taskRepo.CountTaskClosedTodayOfUser(userId)
 	if err != nil {
 		return nil, err
 	}
