@@ -1,7 +1,6 @@
 package task
 
 import (
-	payload "source-base-go/api/payload/task"
 	taskPayload "source-base-go/api/payload/task"
 	"source-base-go/entity"
 	"source-base-go/infrastructure/repository"
@@ -31,6 +30,7 @@ type TaskRepository interface {
 type StatusRepository interface {
 	GetStatusByCodeAndType(typeStatus string, code string) (*entity.Status, error)
 	FindByType(typeStatus string) ([]*entity.Status, error)
+	FindById(id int) (*entity.Status, error)
 }
 
 type TaskDocumentRepository interface {
@@ -78,8 +78,8 @@ type UseCase interface {
 	CreateTask(userId int, payload taskPayload.TaskPayload) (int, error)
 	GetListTaskOfProject(projectId int, page, size int, sortType, sortBy string) ([]*entity.Task, []*entity.Status, error)
 	GetTaskDetail(taskId int) (*entity.Task, error)
-	UpdateTask(payload payload.TaskUpdatePayload) error
-	UpdateTaskStatus(taskId, statusId int) error
+	UpdateTask(userId int, data taskPayload.TaskUpdatePayload) error
+	UpdateTaskStatus(userId, taskId, statusId int) error
 	GetListTaskByDate(projectId int, userId int, timeOffset int, fromDate time.Time, toDate time.Time) ([]*entity.Task, error)
 	CreateDiscussionTask(userId, taskId int, comment string) error
 	GetListDiscussionOfTask(taskId int, page, size int, sortBy, sortType string) ([]*entity.Discussion, int, error)

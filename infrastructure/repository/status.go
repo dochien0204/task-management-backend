@@ -41,3 +41,15 @@ func (r StatusRepository) GetStatusByCodeAndType(typeStatus string, code string)
 
 	return status, nil
 }
+
+func (r StatusRepository) FindById(id int) (*entity.Status, error){
+	status := &entity.Status{}
+	err := r.db.Model(&entity.Status{}).
+		Where("id = ?", id).First(&status).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return status, nil
+}

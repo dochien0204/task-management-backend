@@ -154,7 +154,7 @@ func (s Service) GetTaskDetail(taskId int) (*entity.Task, error) {
 	return s.taskRepo.GetTaskDetail(taskId)
 }
 
-func (s Service) UpdateTask(data taskPayload.TaskUpdatePayload) error {
+func (s Service) UpdateTask(userId int, data taskPayload.TaskUpdatePayload) error {
 	mapTask := map[string]interface{}{}
 	mapTask["name"] = data.Name
 	mapTask["description"] = data.Description
@@ -176,10 +176,66 @@ func (s Service) UpdateTask(data taskPayload.TaskUpdatePayload) error {
 	} else {
 		mapTask["due_date"] = data.DueDate
 	}
-
-	err := s.taskRepo.UpdateTask(data.Id, mapTask)
+	task, err := s.taskRepo.GetTaskDetail(data.Id)
 	if err != nil {
 		return err
+	}
+	
+	userLogg, err := s.userRepo.FindById(userId)
+	if err != nil {
+		return err
+	}
+
+	assignee, err := s.userRepo.FindById(*data.AssigneeId)
+	if err != nil {
+		return err
+	}
+
+	description := ""
+	if task.Name != data.Name {
+		description += fmt.Sprintf("Người dùng (%v) đã thay đổi tên task (%v) thành (%v) |", userLogg.Username, task.Name, data.Name)
+	}
+
+	if task.Description != data.Description {
+		description += fmt.Sprintf("Người dùng (%v) đã thay đổi mô tả cho task (%v) thành (%v) |", userLogg.Username, task.Name, data.Description)
+	}
+
+	if *task.AssigneeId != *data.AssigneeId {
+		description += fmt.Sprintf("Người dùng (%v) đã thay đổi người nhận task (%v) từ (%v) sang người dùng (%v) | ", userLogg.Username, task.Name,task.Assignee.Username, assignee.Username)
+	}
+	err = s.taskRepo.UpdateTask(data.Id, mapTask)
+	if err != nil {
+		return err
+	}
+
+	activity := &entity.Activity{
+		UserId: userId,
+		TaskId: data.Id,
+		Description: description,
+	}
+
+	// //Find all user in project
+	// listUser, err := s.userProjectRoleRepo.FindAllUserOfProject(data.ProjectId)
+	// if err != nil {
+	// 	return 0, err
+	// }
+
+	// listEmail := []string{}
+	// for _, user := range listUser {
+	// 	listEmail = append(listEmail, user.Email)
+	// }
+
+	// err = s.emailRepo.SendMailForUsers(description, listEmail, "TASK CREATE")
+	// if err != nil {
+	// 	return 0, err
+	// }
+
+	//Send mail
+	if activity.Description != "" {
+		err = s.activityRepo.CreateActivity(activity)
+		if err != nil {
+			return err
+		}
 	}
 
 	//Create task document
@@ -210,8 +266,47 @@ func (s Service) UpdateTask(data taskPayload.TaskUpdatePayload) error {
 	return nil
 }
 
-func (s Service) UpdateTaskStatus(taskId, statusId int) error {
-	return s.taskRepo.UpdateStatusTask(taskId, statusId)
+func (s Service) UpdateTaskStatus(userId, taskId, statusId int) error {
+	status, err := s.statusRepo.FindById(statusId)
+	if err != nil {
+		return err
+	}
+
+	task, err := s.taskRepo.GetTaskDetail(taskId)
+	if err != nil {
+		return err
+	}
+	
+	userLogg, err := s.userRepo.FindById(userId)
+	if err != nil {
+		return err
+	}
+
+	description := ""
+	if statusId != task.StatusId {
+		description += fmt.Sprintf("Người dùng (%v) đã thay đổi người trạng task (%v) từ (%v) sang trạng thái (%v) | ", userLogg.Username, task.Name, task.Status.Name, status.Name)
+	}
+
+	err = s.taskRepo.UpdateStatusTask(taskId, statusId)
+	if err != nil {
+		return err
+	}
+
+	activity := &entity.Activity{
+		UserId: userId,
+		TaskId: taskId,
+		Description: description,
+	}
+
+	//Send mail
+	if activity.Description != "" {
+		err = s.activityRepo.CreateActivity(activity)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (s Service) GetListTaskByDate(projectId int, userId int, timeOffset int, fromDate time.Time, toDate time.Time) ([]*entity.Task, error) {

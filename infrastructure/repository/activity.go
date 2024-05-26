@@ -56,7 +56,7 @@ func (r ActivityRepository) GetListActivityByDate(projectId int, timeOffset int,
 
 	err := chain.
 		Preload("User").
-		Order("created_at desc").
+		Order("created_at DESC").
 		Find(&listActivity).Error
 
 	if err != nil {
