@@ -124,9 +124,8 @@ func (r TaskRepository) UpdateStatusTask(taskId int, statusId int) error {
 func (r TaskRepository) GetListTaskByDate(projectId int, userId int, timeOffset int, fromDate time.Time, toDate time.Time) ([]*entity.Task, error) {
 	listTask := []*entity.Task{}
 	chain := r.db.Model(&entity.Task{}).
-		Where("project_id = ?", projectId).
-		Where("assignee_id = ?", userId)
-
+		Where("project_id = ?", projectId)
+		
 	if !fromDate.IsZero() {
 		chain = chain.Where(fmt.Sprintf(`(task.start_date) + interval '%v hour' >= ?`, timeOffset), fromDate)
 	}
