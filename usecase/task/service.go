@@ -320,7 +320,38 @@ func (s Service) CreateDiscussionTask(userId, taskId int, comment string) error 
 		Comment: comment,
 	}
 
-	return s.discussionRepo.Create(discussion)
+	err := s.discussionRepo.Create(discussion)
+	if err != nil {
+		return err
+	}
+
+	task, err := s.taskRepo.GetTaskDetail(taskId)
+	if err != nil {
+		return err
+	}
+
+	userLogg, err := s.userRepo.FindById(userId)
+	if err != nil {
+		return err
+	}
+
+	description := fmt.Sprintf("Người dùng (%v) đã thêm một bình luận vào task (%v) | ", userLogg.Username, task.Name)
+
+	activity := &entity.Activity{
+		UserId: userId,
+		TaskId: taskId,
+		Description: description,
+	}
+
+	//Send mail
+	if activity.Description != "" {
+		err = s.activityRepo.CreateActivity(activity)
+		if err != nil {
+			return err
+		}
+	}
+	
+	return nil
 }
 
 func (s Service) GetListDiscussionOfTask(taskId int, page, size int, sortBy, sortType string) ([]*entity.Discussion, int, error) {
