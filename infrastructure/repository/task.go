@@ -125,13 +125,13 @@ func (r TaskRepository) GetListTaskByDate(projectId int, userId int, timeOffset 
 	listTask := []*entity.Task{}
 	chain := r.db.Model(&entity.Task{}).
 		Where("project_id = ?", projectId)
-		
+
 	if !fromDate.IsZero() {
-		chain = chain.Where(fmt.Sprintf(`(task.start_date) + interval '%v hour' >= ?`, timeOffset), fromDate)
+		chain = chain.Where(fmt.Sprintf(`(task.start_date) + interval '%v hour' >= ?`, 7), fromDate)
 	}
 
 	if !toDate.IsZero() {
-		chain = chain.Where(fmt.Sprintf(`(task.due_date) + interval '%v hour' <= ?`, timeOffset), toDate)
+		chain = chain.Where(fmt.Sprintf(`(task.due_date) + interval '%v hour' <= ?`, 7), toDate)
 	}
 
 	err := chain.
