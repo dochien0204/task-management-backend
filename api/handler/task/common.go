@@ -159,12 +159,12 @@ func convertListTaskByDateToPresenter(listTask []*entity.Task) []*presenter.List
 			Type: task.Status.Type,
 		},
 		StartDate: task.StartDate.Format(config.LAYOUT),
-		DueDate: task.DueDate.Format(config.LAYOUT),
+		DueDate: task.DueDate.Add(7 * time.Hour).Format(config.LAYOUT),
 		CreatedAt: task.CreatedAt.Format(config.LAYOUT),
 		UpdatedAt: task.UpdatedAt.Format(config.LAYOUT),
 		}
 
-		mapDate[task.DueDate.Format(config.DATE_LAYOUT)] = append(mapDate[task.DueDate.Format(config.DATE_LAYOUT)], taskPresenter)
+		mapDate[task.DueDate.Add(7 * time.Hour).Format(config.DATE_LAYOUT)] = append(mapDate[task.DueDate.Add(7 * time.Hour).Format(config.DATE_LAYOUT)], taskPresenter)
 	}
 
 	for k, v := range mapDate {
