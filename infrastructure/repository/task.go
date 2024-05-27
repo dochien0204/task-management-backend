@@ -124,14 +124,15 @@ func (r TaskRepository) UpdateStatusTask(taskId int, statusId int) error {
 func (r TaskRepository) GetListTaskByDate(projectId int, userId int, timeOffset int, fromDate time.Time, toDate time.Time) ([]*entity.Task, error) {
 	listTask := []*entity.Task{}
 	chain := r.db.Model(&entity.Task{}).
+		Distinct().
 		Where("project_id = ?", projectId)
 
 	if !fromDate.IsZero() {
-		chain = chain.Where(fmt.Sprintf(`(task.start_date) + interval '%v hour' >= ?`, 7), fromDate)
+		chain = chain.Where(fmt.Sprintf(`(task.start_date + interval '%v hours') >= ?`, 7), fromDate)
 	}
 
 	if !toDate.IsZero() {
-		chain = chain.Where(fmt.Sprintf(`(task.due_date) + interval '%v hour' <= ?`, 7), toDate)
+		chain = chain.Where(fmt.Sprintf(`(task.due_date + interval '%v hours') <= ?`, 7), toDate)
 	}
 
 	err := chain.
@@ -371,7 +372,7 @@ func (r TaskRepository) CountTaskOpenTodayOfUser(userId int) (int, error) {
 		Joins("join project p on p.id = task.project_id AND p.deleted_at is null").
 		Where("assignee_id = ?", userId).
 		Where("p.status_id = ?", 7).
-		Where("DATE(task.due_date + interval '7 hour') = ?", today).
+		Where(`DATE(task.due_date + interval '7 hours') = ?`, today).
 		Where("task.status_id IN (?)", []int{3, 4, 5}).
 		Count(&count).Error
 
@@ -389,7 +390,7 @@ func (r TaskRepository) CountTaskClosedTodayOfUser(userId int) (int, error) {
 		Joins("join project p on p.id = task.project_id AND p.deleted_at is null").
 		Where("assignee_id = ?", userId).
 		Where("p.status_id = ?", 7).
-		Where("DATE(task.due_date + interval '7 hour') = ?", today).
+		Where(`DATE(task.due_date + interval '7 hours') = ?`, today).
 		Where("task.status_id = ?", 6).
 		Count(&count).Error
 

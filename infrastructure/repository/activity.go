@@ -47,11 +47,11 @@ func (r ActivityRepository) GetListActivityByDate(projectId int, timeOffset int,
 		Where("t.project_id = ?", projectId)
 
 	if !fromDate.IsZero() {
-		chain = chain.Where(fmt.Sprintf(`(activity.created_at) + interval '%v hour' >= ?`, timeOffset), fromDate)
+		chain = chain.Where(fmt.Sprintf(`(activity.created_at) + interval '%v hours' >= ?`, 7), fromDate)
 	}
 
 	if !toDate.IsZero() {
-		chain = chain.Where(fmt.Sprintf(`(activity.created_at) + interval '%v hour' <= ?`, timeOffset), toDate)
+		chain = chain.Where(fmt.Sprintf(`(activity.created_at) + interval '%v hours' <= ?`, 7), toDate)
 	}
 
 	err := chain.
@@ -74,11 +74,11 @@ func (r ActivityRepository) GetListActivityByDateOfUser(projectId, userId int, t
 		Where("activity.user_id = ?", userId)
 
 	if !fromDate.IsZero() {
-		chain = chain.Where(fmt.Sprintf(`(activity.created_at) + interval '%v hour' >= ?`, timeOffset), fromDate)
+		chain = chain.Where(fmt.Sprintf(`(activity.created_at) + interval '%v hours' >= ?`, 7), fromDate)
 	}
 
 	if !toDate.IsZero() {
-		chain = chain.Where(fmt.Sprintf(`(activity.created_at) + interval '%v hour' <= ?`, timeOffset), toDate)
+		chain = chain.Where(fmt.Sprintf(`(activity.created_at) + interval '%v hours' <= ?`, 7), toDate)
 	}
 
 	err := chain.
